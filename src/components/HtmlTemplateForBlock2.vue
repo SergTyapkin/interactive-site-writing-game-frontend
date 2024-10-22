@@ -122,21 +122,21 @@ img
   // --------------------------
 
 
-  .section .section__list {
+  .section__list {
     padding: 20px 0 20px 20px;
   }
 
-  .section .list__item {
+  .list__item {
     padding: 10px;
   }
 
-  .section .item__header {
+  .item__header {
     //font-weight: bold;
     font-size: 20px;
     text-transform: uppercase;
   }
 
-  .section .item__description {
+  .item__description {
     font-size: 14px;
     color: #555;
   }
