@@ -1,15 +1,15 @@
 import Vuex from 'vuex'
+import validateModel from "@sergtyapkin/models-validator";
+import {UserModel} from "~/models";
+import LocalStorageManager from "~/utils/localStorageManager";
+
+const localStorageManager = new LocalStorageManager();
 
 const Storage = new Vuex.Store({
   state: {
     user: {
       id: String(),
-      name: String(),
-      group: String(),
-      tg: String(),
-      vk: String(),
-      email: String(),
-      phone: String(),
+      username: String(),
       isAdmin: Boolean(),
 
       isSignedIn: false,
@@ -17,33 +17,44 @@ const Storage = new Vuex.Store({
   },
   mutations: {
     SET_USER(state, userData) {
+      localStorageManager.saveUser(userData);
+
+      userData = validateModel(UserModel, userData)
       state.user.id = String(userData.id);
-      state.user.name = String(userData.name);
-      state.user.group = String(userData.group);
-      state.user.tg = String(userData.telegram);
-      state.user.vk = String(userData.vk);
-      state.user.email = String(userData.email);
-      state.user.phone = String(userData.phone_number);
-      state.user.isAdmin = Boolean(userData.is_admin);
+      state.user.username = String(userData.username);
+      state.user.isAdmin = Boolean(userData.isAdmin);
 
       state.user.isSignedIn = true;
     },
     DELETE_USER(state) {
+      localStorageManager.removeUser()
       state.user.isSignedIn = false;
+    },
+    LOAD_USER(state) {
+      let userData = localStorageManager.loadUser()
+
+      if (!userData) {
+        state.user.isSignedIn = false;
+        return;
+      }
+      userData = validateModel(UserModel, userData)
+      state.user.id = String(userData.id);
+      state.user.username = String(userData.username);
+      state.user.isAdmin = Boolean(userData.isAdmin);
+
+      state.user.isSignedIn = true;
     },
   },
   actions: {
-    async GET_USER(state) {
-      const {data, code, ok} = await this.$app.$api.getUser();
-      if (!ok) {
-        state.commit('DELETE_USER');
-        return;
-      }
-      state.commit('SET_USER', data);
+    SET_USER(state, userData) {
+      state.commit('SET_USER', userData);
     },
     DELETE_USER(state) {
       state.commit('DELETE_USER');
     },
+    LOAD_USER(state) {
+      state.commit('LOAD_USER');
+    }
   }
 });
 

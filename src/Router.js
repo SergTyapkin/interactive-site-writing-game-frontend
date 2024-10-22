@@ -3,12 +3,17 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Page404 from "./views/Page404.vue";
 import Page from "~/views/Page.vue";
 import PageChooseMilestone from "~/views/PageChooseMilestone.vue";
+import PagePlay from "~/views/PagePlay.vue";
+import PageAdmin from "~/views/PageAdmin.vue";
 
 export default function createVueRouter(Store) {
     const routes = [
-        {path: '/choose/milestone', name: 'chooseMilestone', component: PageChooseMilestone},
+        {path: '/', name: 'default', component: PageChooseMilestone},
 
-        {path: '/admin', name: 'admin', component: Page},
+        {path: '/choose/milestone', name: 'chooseMilestone', component: PageChooseMilestone},
+        {path: '/play', name: 'play', component: PagePlay},
+
+        {path: '/admin', name: 'admin', component: PageAdmin},
 
         {path: '/:pathMatch(.*)*', name: 'page404', component: Page404},
     ];

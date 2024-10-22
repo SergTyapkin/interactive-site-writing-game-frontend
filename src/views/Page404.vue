@@ -27,7 +27,7 @@
     <div class="form">
       <div class="title">404 Страница не найдена</div>
       <div class="info">Запрошенной страницы не существует</div>
-      <router-link :to="{name: 'default'}"></router-link>
+      <router-link :to="{name: 'chooseMilestone'}"></router-link>
     </div>
   </div>
 </template>

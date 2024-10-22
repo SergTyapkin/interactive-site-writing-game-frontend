@@ -5,6 +5,7 @@ import eslint from 'vite-plugin-eslint'
 import path from 'path';
 
 export default defineConfig({
+  // base: '/vue3-ace-editor/',
   plugins: [
     Vue({
       include: [/\.vue$/],

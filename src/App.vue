@@ -11,7 +11,7 @@
     position absolute
     width 100%
     min-height 100vh
-    padding-top headerHeight
+    padding-top (headerHeight + 30px)
 
   .loading
     top 50%
@@ -121,7 +121,7 @@ animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
   <Header :user="user"></Header>
 
   <div class="wrapper">
-    <CircleLoading v-if="!websocketOpened || !userLogined" class="loading"></CircleLoading>
+    <CircleLoading v-if="!websocketOpened || !$user.isSignedIn" class="loading"></CircleLoading>
     <router-view v-else v-slot="{ Component }">
       <transition name="scale-in">
         <component :is="Component"/>
@@ -198,7 +198,6 @@ export default {
     return {
       transitionName: "",
       websocketOpened: false,
-      user: null,
 
       global: undefined,
     }
@@ -215,10 +214,12 @@ export default {
   async mounted() {
     this.global = getCurrentInstance().appContext.config.globalProperties;
 
+    this.global.$user = this.$store.state.user;
+    this.$user = this.global.$user;
     this.global.$modal = this.$refs.modals;
     this.global.$popups = this.$refs.popups;
     this.global.$localStorage = new LocalStorageManager();
-    this.global.$user = this.global.$localStorage.userData;
+    this.$localStorage = this.global.$localStorage;
     this.global.$app = this;
 
     this.checkMobileScreen();
@@ -235,8 +236,29 @@ export default {
     this.$ws.open();
 
     // ------ If user not logined - wait for login --------
-    this.$localStorage.loadUser();
-    if (!this.$user.isLogined) {
+    await this.loginUser();
+
+    if (this.$user.isAdmin) {
+      return;
+    }
+
+    // No fragment
+    const fragmentData = this.$localStorage.loadSelectedFragment();
+    if (!fragmentData) {
+      this.$router.push({name: 'chooseMilestone'});
+      return;
+    }
+
+    // Go to editor
+    this.$router.push({name: 'play'});
+  },
+
+  methods: {
+    async loginUser() {
+      this.$store.dispatch('LOAD_USER', this.$localStorage);
+      if (this.$user.isSignedIn) {
+        return;
+      }
       let userName;
       while (!userName) {
         userName = await this.$modal.prompt("Введите ваше имя", "Имя будет отображаться для всех. Да, сюда можно написать \"ХУХ\", но, пожалуйста, без бан-вордов", "", "Ваше имя...")
@@ -245,21 +267,12 @@ export default {
       let responsePromiseResolveFunc;
       const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
       this.$ws.handlers.user_logined = (data) => {
-        this.$localStorage.saveUser(data);
+        this.$store.dispatch('SET_USER', data, this.$localStorage);
         responsePromiseResolveFunc();
       }
       await waitForResponsePromise;
-    }
-    this.user = this.$localStorage.userData;
-    if (this.$user.isAdmin) {
-      this.$router.push({name: 'admin'});
-    }
+    },
 
-    // user - player, has team
-    this.$router.push({name: 'chooseMilestone'});
-  },
-
-  methods: {
     checkMobileScreen() {
       if (window.innerWidth <= 700) {
         this.global.$isMobile = true;

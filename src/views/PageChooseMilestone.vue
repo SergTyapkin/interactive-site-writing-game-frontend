@@ -1,89 +1,108 @@
 <style lang="stylus" scoped>
 @require '../styles/constants.styl'
+@require '../styles/utils.styl'
+@require '../styles/fonts.styl'
+@require '../styles/animations.styl'
 
-.root
+.root-milestones
   display flex
   flex-direction column
-  overflow-y auto
-
+  align-items center
+  padding-left 20px
+  padding-right 20px
+  padding-bottom 30px
+  > *
+    max-width 500px
   .header
-    --color colorBlocksBg
+    font-large-extra()
+    margin-bottom 60px
+  .milestones-list
+    list-no-styles()
     display flex
-    align-items center
-    width 100%
-    background var(--color)
-    box-shadow 0 5px 20px var(--color)
-    color textColor1
-    padding 10px
-    filter brightness(0.8)
-    transition filter 0.2s ease
-    cursor pointer
-    &:hover
-      filter brightness(1)
-    .arrow-back
-      transform rotate(180deg)
-      width 60px
-      height 60px
-    .name-container
-      white-space nowrap
-      .name
-        font-medium()
-      .team-name
-        font-small()
+    flex-direction column
+    gap 70px
+    .milestone-container
+      position relative
+      &:nth-child(2n)
+        .number
+          right 0
+        .milestone
+          .top-string
+            .year
+              color colorText3
+      .number
+        position absolute
+        z-index -1
+        font-size 280px
+        top -100px
+        color colorText1
+      .milestone
+        border 1px solid #66666660
+        border-radius borderRadiusS
+        padding 20px
+        backdrop-filter blur(8px)
+        background mix(#333, transparent)
+        position relative
+        min-height 150px
+        trans()
+        cursor pointer
+        .top-string
+          display flex
+          justify-content space-between
+          align-items flex-start
+          margin-bottom 10px
+          .name
+            font-large-extra()
+            font-bold()
+            color colorEmp1
+            trans(0.5s)
+          .year
+            color colorText4
+            font-small()
+        .description
+          color colorText1
 
-  .h1
-    font-large()
-    margin 20px
-  .team
-    flex 1
-    display flex
-    align-items center
-    font-medium()
-    color textColorDark4
-    font-weight 600
-    background var(--color)
-    width 100%
-    padding 20px
-    cursor pointer
-    transition all 0.2s ease
-    text-transform capitalize
-    filter brightness(0.8)
-    .profile-img
-      width 20px
-      height 20px
-      margin-left 20px
-    &:hover
-      color white
-      filter brightness(1.2)
+        &:hover
+          background mix(#555, transparent, 60%)
+          border-color transparent
+          .top-string
+            .name
+              letter-spacing 4px
 </style>
 
 <template>
-  <div class="root _app-flex-filler">
-    <header class="header" @click="quit">
-      <img class="arrow-back" src="../res/arrow_corner_right.svg" alt="back">
-      <div class="name-container">
-        <div class="name">{{ myName }}</div>
-      </div>
-    </header>
+  <div class="root-milestones">
+    <CircleLoading v-if="loading"></CircleLoading>
+    <header v-else class="header">Выбор этапа</header>
 
-    <div class="h1">Выбор команды</div>
-    <div v-for="team in teams" class="team" :style="{'--color': team.color}" @click="chooseTeam(team)">
-      {{ team.name }}
-      <span v-if="team.count !== undefined">
-        <img src="../res/profile.svg" class="profile-img" alt="users">
-        {{ team.count || 0 }}
-      </span>
-    </div>
+    <ul class="milestones-list">
+      <li v-for="milestone in Milestones" class="milestone-container">
+        <header class="number">{{ milestone.id }}</header>
+        <div @click="chooseMilestone(milestone)" class="milestone">
+          <div class="top-string">
+            <header class="name">{{ milestone.name }}</header>
+            <div class="year">год {{ milestone.year }}</div>
+          </div>
+          <div class="description">{{ milestone.description }}</div>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
 import {Milestones} from "~/utils/constants";
+import CircleLoading from "~/App.vue";
 
 export default {
+  components: {CircleLoading},
   data() {
     return {
       myName: undefined,
+
+      loading: false,
+
+      Milestones,
     }
   },
 
@@ -91,21 +110,33 @@ export default {
   },
 
   methods: {
-    chooseMilestone(milestone) {
-      this.$ws.send('select_milestone', {
-        userName: this.myName,
-        teamId: team.id,
-        teamName: team.name
+    async chooseMilestone(milestone) {
+      if (this.loading) {
+        return;
+      }
+
+      if (!await this.$modal.confirm(`Вы точно хотите выбрать этап "${milestone.name}"?`)) {
+        return;
+      }
+      const userWantsToGetHarder = await this.$modal.confirm("Вы хотели бы получить часть кода посложнее?");
+      this.$ws.send('take_fragment', {
+        user_id: this.$user.id,
+        user_username: this.$user.username,
+        milestone_id: milestone.id,
+        request_hardness: userWantsToGetHarder ? 1.0 : 0.0,
       });
-      this.$localStorage.saveSelectedTeam(team.id);
+
+      this.loading = true;
+      let responsePromiseResolveFunc;
+      const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
+      this.$ws.handlers.set_fragment = (data) => {
+        this.$localStorage.saveSelectedFragment(data);
+        responsePromiseResolveFunc();
+      }
+      await waitForResponsePromise;
+      this.loading = false;
       this.$router.push({name: 'play'});
     },
-
-    quit() {
-      this.$localStorage.removeRole();
-      this.$localStorage.removeUserName();
-      this.$router.push({name: "chooseRole"});
-    }
   }
 }
 </script>

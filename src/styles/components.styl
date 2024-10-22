@@ -19,11 +19,11 @@ block-bg(colorBg=colorBg)
 input()
     margin 0
     padding 5px 10px
-    background colorBg
-    border colorBorder 1px solid
-    border-radius borderRadiusXS
+    backdrop-filter blur(8px)
+    background mix(#333, transparent)
+    border 1px solid #66666660
+    border-radius borderRadiusS
     color colorText2
-    cursor text
     trans()
     &:focus
         border-color colorBg

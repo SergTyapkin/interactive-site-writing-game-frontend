@@ -1,32 +1,37 @@
 export const Milestones = [
   {
-    number: 1,
+    id: 1,
     year: 1991,
     name: "HTML",
     description: "Самые первые сайты, и как верстались в то время они",
+    codeLanguage: "html",
   },
   {
-    number: 2,
+    id: 2,
     year: 1996,
     name: "CSS",
     description: "Появление CSS и простая стилизация элементов на странице",
+    codeLanguage: "css",
   },
   {
-    number: 3,
+    id: 3,
     year: 1997,
     name: "JS",
     description: "Появление JS и взаимодействие с HTML DOM из кода JS",
+    codeLanguage: "javascript",
   },
   {
-    number: 4,
+    id: 4,
     year: 2002,
     name: "JS SPA",
     description: "Первый \"одностраничный\" (Single Page Application) сайт и его реализация без фреймворков на чистом JS",
+    codeLanguage: "javascript",
   },
   {
-    number: 5,
+    id: 5,
     year: 2012,
     name: "Vue.js",
     description: "Появление SPA-фреймворков и реализация SPA на Vue.js",
+    codeLanguage: "javascript",
   },
 ]
