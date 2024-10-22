@@ -27,18 +27,18 @@ export default defineConfig({
   server: {
     https: true,
     proxy: {
-      // '/ws': {
-      //   target: `ws://127.0.0.1:9000`,
-      //   secure: true,
-      //   ws: true,
-      //   changeOrigin: true,
-      // },
-      '/api': {
-        target: `http://127.0.0.1:9000`,
-        secure: false,
-        changeOrigin: false,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+      '/ws': {
+        target: `ws://127.0.0.1:9000`,
+        secure: true,
+        ws: true,
+        changeOrigin: true,
       },
+      // '/api': {
+      //   target: `http://127.0.0.1:9000`,
+      //   secure: false,
+      //   changeOrigin: false,
+      //   rewrite: (path) => path.replace(/^\/api/, ''),
+      // },
     }
   },
   resolve: {

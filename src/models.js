@@ -1,7 +1,17 @@
-export const User = {
+export const UserModel = {
+  id: String,
+  username: String,
+  isAdmin: {
+    type: Boolean,
+    from: 'is_admin',
+  },
+}
+
+export const FragmentModel = {
   id: String,
   name: String,
-  email: String,
-  tg: String,
-  vk: String,
+  description: {
+    type: String,
+    optional: true,
+  },
 }

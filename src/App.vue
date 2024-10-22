@@ -11,11 +11,118 @@
     position absolute
     width 100%
     min-height 100vh
+    padding-top headerHeight
+
+  .loading
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
+    width 100px
+    height 100px
+    min-height unset
+
+
+backgroundBorderColor = colorBg
+animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
+.background
+  z-index -1
+  position fixed
+  inset 0
+  overflow hidden
+  div
+    opacity 0.3
+    width 100%
+    position absolute
+    border solid 1px colorBorder
+    background black
+    border-radius 20px
+    animation bg-move-top animation-time-rule
+    @keyframes bg-move-top
+      0%
+        opacity 0
+        top 0
+        height 200%
+        width 200%
+      20%
+        top 0
+        height 200%
+        width 200%
+  div:nth-child(2n)
+    animation bg-move-bottom animation-time-rule
+    @keyframes bg-move-bottom
+      0%
+        opacity 0
+        top 100%
+        height 200%
+        width 200%
+      20%
+        top 100%
+        height 200%
+        width 200%
+
+  div:nth-child(4)
+    animation bg-move-top-scale animation-time-rule
+    @keyframes bg-move-top-scale
+      0%
+        opacity 0
+        top 100%
+        height 0%
+        width 200%
+      20%
+        top 0%
+        height 0%
+        width 200%
+  div:nth-child(1)
+    top 50%
+    left 50%
+    height 100%
+    width 100%
+    transform rotate(70deg)
+    animation-duration 0.3s
+  div:nth-child(2)
+    top 0%
+    left 20%
+    height 200%
+    width 100%
+    transform rotate(40deg)
+    animation-duration 1.2s
+  div:nth-child(3)
+    top -40%
+    left -50%
+    height 100%
+    width 100%
+    transform rotate(20deg)
+    animation-duration 0.6s
+  div:nth-child(4)
+    top -15%
+    left 20%
+    height 100%
+    width 200%
+    transform rotate(30deg)
+    animation-duration 0.8s
+  div:nth-child(5)
+    top 90%
+    left 30%
+    height 100%
+    width 100%
+    transform rotate(20deg)
+    animation-duration 1s
 </style>
 
 <template>
+  <div class="background">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <Header :user="user"></Header>
+
   <div class="wrapper">
-    <router-view v-slot="{ Component }">
+    <CircleLoading v-if="!websocketOpened || !userLogined" class="loading"></CircleLoading>
+    <router-view v-else v-slot="{ Component }">
       <transition name="scale-in">
         <component :is="Component"/>
       </transition>
@@ -80,15 +187,19 @@
 import {getCurrentInstance} from "vue";
 import {Modals, Popups} from "@sergtyapkin/modals-popups";
 import CircleLoading from "./components/CircleLoading.vue";
-import API from "./utils/API";
+import LocalStorageManager from "~/utils/localStorageManager";
+import Header from "~/components/Header.vue";
 
 
 export default {
-  components: { CircleLoading, Modals, Popups },
+  components: {Header, CircleLoading, Modals, Popups },
 
   data() {
     return {
       transitionName: "",
+      websocketOpened: false,
+      user: null,
+
       global: undefined,
     }
   },
@@ -101,19 +212,51 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     this.global = getCurrentInstance().appContext.config.globalProperties;
 
-    this.global.$user = this.$store.state.user;
     this.global.$modal = this.$refs.modals;
     this.global.$popups = this.$refs.popups;
+    this.global.$localStorage = new LocalStorageManager();
+    this.global.$user = this.global.$localStorage.userData;
     this.global.$app = this;
-    this.global.$api = new API(`/api`);
 
     this.checkMobileScreen();
     window.addEventListener('resize', (e) => {
       this.checkMobileScreen();
     });
+
+
+    // ------ Setup basic WS handlers --------
+    this.$ws.onopen = () => {this.websocketOpened = true};
+    this.$ws.onerror = () => {
+      this.$popups.error('Ошибка подключения:', 'Сервер недоступен');
+    }
+    this.$ws.open();
+
+    // ------ If user not logined - wait for login --------
+    this.$localStorage.loadUser();
+    if (!this.$user.isLogined) {
+      let userName;
+      while (!userName) {
+        userName = await this.$modal.prompt("Введите ваше имя", "Имя будет отображаться для всех. Да, сюда можно написать \"ХУХ\", но, пожалуйста, без бан-вордов", "", "Ваше имя...")
+      }
+      this.$ws.send('login_user', {username: userName});
+      let responsePromiseResolveFunc;
+      const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
+      this.$ws.handlers.user_logined = (data) => {
+        this.$localStorage.saveUser(data);
+        responsePromiseResolveFunc();
+      }
+      await waitForResponsePromise;
+    }
+    this.user = this.$localStorage.userData;
+    if (this.$user.isAdmin) {
+      this.$router.push({name: 'admin'});
+    }
+
+    // user - player, has team
+    this.$router.push({name: 'chooseMilestone'});
   },
 
   methods: {

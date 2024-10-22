@@ -72,3 +72,13 @@ export function detectOS() {
   if (window.navigator.userAgent.indexOf("Linux")          !== -1) return "Linux";
   return "Unknown OS";
 }
+
+export function padStart(num, size) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
+export function deepClone(obj = {}) {
+  return JSON.parse(JSON.stringify(obj));
+}

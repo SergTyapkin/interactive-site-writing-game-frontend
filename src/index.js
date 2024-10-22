@@ -11,7 +11,7 @@ import './styles/global.styl';
 const Router = createVueRouter(Storage);
 const app = createApp(App)
   .use(Router)
-  .use(WS)
+  .use(WS, '/ws')
   .use(Storage)
   .mount('#app');
 Storage.$app = app;
