@@ -88,21 +88,6 @@ img
   // --------------------------
 
 
-  .gallery {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-  }
-
-  .gallery__image {
-    width: 30%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-  // --------------------------
-
-
   .section {
     padding: 80px 40px;
   }
@@ -122,7 +107,22 @@ img
   // --------------------------
 
 
-  .section .list {
+  .gallery {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+
+  .gallery__image {
+    width: 30%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  // --------------------------
+
+
+  .section .section__list {
     padding: 20px 0 20px 20px;
   }
 
@@ -304,12 +304,7 @@ img
       </section>
 
       <section class="section">
-        <header class="section__header">Наши услуги</header>
-        <p class="section__paragraph">
-          Мы предлагаем не только продажу смартфонов, но и ряд дополнительных услуг, которые сделают процесс покупки
-          максимально комфортным:
-        </p>
-        <ul class="list">
+        <ul class="section__list">
           <li class="list__item">
             <header class="item__header">Доставка до двери</header>
             <span class="item__description">Мы позаботимся о том, чтобы вы получили свой новый смартфон в кратчайшие сроки и с максимальным комфортом.</span>
