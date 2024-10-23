@@ -9,6 +9,7 @@
     text-align center
     padding 0 20px
     margin-bottom 10px
+    cursor pointer
     .header
       font-large()
     .task-name
