@@ -454,19 +454,19 @@ img
 
 
       <section class="section">
-        <form id="form-calculator" class="form-calculator">
+        <form id="form-calculator" class="form-calculator" action="javascript:void(0)">
           <header class="form-calculator__header">Мы расчитаем для вас стоимость</header>
 
           <div class="form-calculator__input-container">
             <label for="form-calculator__input-cost" class="input-calculator__label">Стоимость телефона</label>
-            <input id="form-calculator__input-cost" class="input-calculator__input" type="number" name="cost" placeholder="12000" required>
+            <input id="form-calculator__input-cost" class="input-calculator__input" type="number" min="0" name="cost" placeholder="12000" required>
           </div>
           <div class="form-calculator__input-container">
             <label for="form-calculator__input-count" class="input-calculator__label">Количество телефонов</label>
-            <input id="form-calculator__input-count" class="input-calculator__input" type="number" name="count" placeholder="3" required>
+            <input id="form-calculator__input-count" class="input-calculator__input" type="number" min="0" name="count" placeholder="3" required>
           </div>
 
-          <div class="form-calculator__result">Общая стоимость: <span id="form-calculator__result"></span></div>
+          <div class="form-calculator__result">Общая стоимость: <span id="form-calculator__result">0</span> $</div>
         </form>
       </section>
     </main>
@@ -510,6 +510,7 @@ export default {
         return;
       }
       // ------------------
+      // Получаем HTML-элементы
       const formElement = document.getElementById('form-contacts');
       const inputNameElement = document.getElementById('form-contacts__input-name');
       const inputPhoneElement = document.getElementById('form-contacts__input-phone');
@@ -539,20 +540,20 @@ export default {
       // ------------------
 
       window.confirm = (message = '') => {
-        // Create promise and save it's resolving function
+        // Создает Promise и сохранить его функцию resolve в переменную resolvePromiseFunction
         let resolvePromiseFunction;
         const promise = new Promise((resolve) => {
           resolvePromiseFunction = resolve;
         });
 
-        // Background
+        // Создание элемента фона
         const modalElementRoot = document.createElement('div');
         modalElementRoot.style.position = 'fixed';
         modalElementRoot.style.inset = '0';
         modalElementRoot.style.background = '#00000080';
         modalElementRoot.style.backdropFilter = 'blur(10px)';
 
-        // Form
+        // Создание элемента формы
         const modalElementForm = document.createElement('div');
         modalElementRoot.appendChild(modalElementForm);
         Object.assign(modalElementForm.style, {
@@ -567,7 +568,7 @@ export default {
           color: '#fff',
         });
 
-        // Text in form
+        // Создание элемента текста внутри формы
         const modalElementFormText = document.createElement('div');
         modalElementForm.appendChild(modalElementFormText);
         modalElementFormText.style.textAlign = 'center';
@@ -575,7 +576,7 @@ export default {
         modalElementFormText.style.marginBottom = '20px';
         modalElementFormText.innerText = message;
 
-        // Buttons in form
+        // Создание элементов кнопок внутри формы
         const modalElementFormButtons = [document.createElement('button'), document.createElement('button')];
         modalElementFormButtons.forEach(button => {
           modalElementForm.appendChild(button);
@@ -596,20 +597,23 @@ export default {
           modalElementRoot.remove();
         });
 
-        // Add root element into DOM
+        // Добавляем созданный корневой элемент в DOM
         document.body.appendChild(modalElementRoot);
 
         return promise;
       };
       // ------------------
 
+
       const galleryElements = document.querySelectorAll('#gallery > *');
       document.addEventListener('mousemove', (event) => {
         galleryElements.forEach(element => {
+          // Эта часть необходима
           if (element.hasAttribute('data-is-fullscreen')) {
             return;
           }
-          // Easy
+
+          // Простой вариант
           element.setAttribute('style', `
             --x: ${event.pageX};
             --y: ${event.pageY};
@@ -617,7 +621,7 @@ export default {
             --total-height: ${window.innerHeight};
           `);
 
-          // Hard
+          // Сложный вариант
           // const box = element.getBoundingClientRect();
           // const x = box.left - event.pageX;
           // const y = box.top - event.pageY;
@@ -633,34 +637,47 @@ export default {
       });
       // ------------------
 
+      // Получаем HTML-элемент формы
       const formHTMLElement = document.getElementById('form-contacts');
       document.body.addEventListener('scroll', () => {
+        // Получаем текущее положение элемента относительно области просмотра экрана
         const box = formHTMLElement.getBoundingClientRect();
 
+        // Проверяем, попадает ли форма в обозначенную область
         if (box.top < window.innerHeight * 0.8 && box.bottom > window.innerHeight * 0.2) {
+          // Если попадает, добавляем класс 'visible'
           formHTMLElement.classList.add('visible');
           return;
         }
+        // Если не попадает, убираем класс 'visible'
         formHTMLElement.classList.remove('visible');
       });
       // ------------------
 
+      // Получаем HTML-элемент раскрывающегося списка
       const detailsElement = document.getElementById('details');
+      // Добавляем на него стили для обрезки выходящего за размеры блока контента и для плавной анимации максимальной высоты
       detailsElement.style.overflow = 'hidden'
       detailsElement.style.transition = 'max-height 0.4s ease'
       detailsElement.addEventListener('click', () => {
+        // Если на элементе есть нет определенного атрибута, отвечающий за его состояние (открыт или нет),
+        //  то элемент нужно развернуть (установить ему большую максимальную высоту, которая точно всегда будет больше его реальной высоты)
         if (!detailsElement.hasAttribute('open')) {
           detailsElement.style.maxHeight = '999px';
           return;
         }
+        // Иначе его нужно закрыть (установить ему максимальную высоту около 20px)
         detailsElement.style.maxHeight = '20px';
       });
       // ------------------
 
+      // Получаем HTML-элемент гарелеи изображений
       const galleryImageElements = document.querySelectorAll('#gallery > *');
       galleryImageElements.forEach(element => {
         element.addEventListener('click', () => {
+          // Если на элементе атрибут "data-is-fullscreen" уже существует, его нужно убрать. Если не существует - добавить
           element.toggleAttribute('data-is-fullscreen')
+          // Если на элементе существует атрибут "data-is-fullscreen", необходимо добавить на элемент стили для растягивания его на весь экран поверх всех элементов
           if (element.hasAttribute('data-is-fullscreen')) {
             element.style.position = 'fixed';
             element.style.zIndex = '999';
@@ -670,14 +687,30 @@ export default {
             element.style.height = '100%';
             element.style.background = '#00000080';
             element.style.objectFit = 'contain';
-            element.style.transform = 'none';
-          } else {
-            element.style.position = 'relative';
-            element.style.width = '';
-            element.style.height = '';
+            element.style.transform = 'none'; // нужно, чтобы убрать стили от другого блока кода
+            return;
           }
+          // Иначе необходимо вернуть всё обратно и убрать эти стили
+          element.style.position = 'initial';
+          element.style.width = '';
+          element.style.height = '';
         });
       });
+      // ------------------
+
+      // Получаем HTML-элементы двух полей ввода и элемент для вывода результата
+      const inputCostElement = document.getElementById('form-calculator__input-cost');
+      const inputCountElement = document.getElementById('form-calculator__input-count');
+      const calculatedResultElement = document.getElementById('form-calculator__result');
+      // Функция подсчета и обновления результата
+      function calculateAndSetResult() {
+        const result = +inputCostElement.value * +inputCountElement.value;
+        calculatedResultElement.innerText = String(result) || '0';
+
+      }
+      // Добавляем EventListener'ы для вызова функции обновления при вводе данных в инпуты
+      inputCostElement.addEventListener('input', calculateAndSetResult);
+      inputCountElement.addEventListener('input', calculateAndSetResult);
     }
   }
 }

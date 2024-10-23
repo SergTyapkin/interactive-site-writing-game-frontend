@@ -73,7 +73,7 @@
         <input id="adjust-size" v-model="isAdjustRendererSize" type="checkbox">
       </div>
       <div class="input-group_">
-        <button type="submit" @click="updateCodeTexts">Reload</button>
+        <button type="submit" @click="reloadPage">Reload</button>
       </div>
     </div>
 
@@ -102,6 +102,10 @@
         </section>
 
         <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
+          <HtmlTemplateForBlock2 styled></HtmlTemplateForBlock2>
+        </section>
+
+        <section v-else-if="selectedMilestone?.id === 4" class="renderer_ js_spa_">
           <HtmlTemplateForBlock2 styled scripted></HtmlTemplateForBlock2>
         </section>
       </div>
@@ -116,6 +120,7 @@ import {Milestones} from "~/utils/constants";
 import validateModel from "@sergtyapkin/models-validator";
 import {FragmentModel, FragmentShortModel} from "~/models";
 import HtmlTemplateForBlock2 from "~/components/HtmlTemplateForBlock2.vue";
+import {nextTick} from "vue";
 
 export default {
   components: {HtmlTemplateForBlock2, Selector, VAceEditor},
@@ -177,6 +182,15 @@ export default {
       this.$ws.send('get_all_texts', {
         milestone_id: this.selectedMilestoneId,
       });
+    },
+
+    async reloadPage() {
+      const saveSelectedMilestoneId = this.selectedMilestoneId;
+      this.selectedMilestoneId = null;
+      this.codeText = '';
+      await nextTick();
+      this.selectedMilestoneId = saveSelectedMilestoneId;
+      this.updateCodeTexts();
     },
 
     updateCodeTexts() {
