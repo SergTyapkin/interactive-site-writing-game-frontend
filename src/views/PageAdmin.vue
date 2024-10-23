@@ -52,18 +52,15 @@
         flex 1
         background colorBg
 
-        &.css_
-        &.html_
-        &.js_
-          transition transform 0.2s ease-out
-          transform unquote('scale(min(calc(var(--max-height) / var(--total-height)), 1))')
-          transform-origin 50% 0
+        transition transform 0.2s ease-out
+        transform unquote('scale(min(calc(var(--max-height) / var(--total-height)), 1))')
+        transform-origin 50% 0
 </style>
 
 <template>
   <div class="root-admin_">
     <Selector v-model="selectedMilestoneId" name="milestone" class="selector_" @update:modelValue="getAllTexts()">
-      <option v-for="milestone in Milestones" :value="milestone.id">{{ milestone.name }}</option>
+      <option v-for="milestone in Milestones" :value="milestone.id">{{ milestone.id }}. {{ milestone.name }}</option>
     </Selector>
 
     <div class="input-groups-container_">
@@ -105,7 +102,7 @@
         </section>
 
         <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
-          <HtmlTemplateForBlock2 styled></HtmlTemplateForBlock2>
+          <HtmlTemplateForBlock2 styled scripted></HtmlTemplateForBlock2>
         </section>
       </div>
     </main>

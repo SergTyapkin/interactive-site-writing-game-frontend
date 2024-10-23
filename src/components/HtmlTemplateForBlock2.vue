@@ -10,6 +10,7 @@ img
 <style scoped lang="stylus">
 .root-html-template.styled
   // --------------------------
+
   .header {
     padding: 15px;
     background: #151515;
@@ -55,6 +56,7 @@ img
     font-size: 30px;
     animation-delay: 0.2s;
   }
+
   // --------------------------
 
 
@@ -74,6 +76,7 @@ img
   .navbar__link:hover {
     opacity: 0.7;
   }
+
   // --------------------------
 
 
@@ -81,10 +84,12 @@ img
     background: white;
     color: black;
   }
+
   .main hr {
     margin: 20px 0 60px;
     border: 2px dashed;
   }
+
   // --------------------------
 
 
@@ -104,6 +109,7 @@ img
     text-transform: uppercase;
     letter-spacing: 1px;
   }
+
   // --------------------------
 
 
@@ -118,7 +124,12 @@ img
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 10px;
+    transform: rotateX(calc(var(--y) / var(--total-height) * -60deg + 30deg)) \
+        rotateY(calc(var(--x) / var(--total-width) * 60deg - 30deg)) \
+        translateX(calc(var(--x) / var(--total-width) * -60px + 30px)) \
+        translateY(calc(var(--y) / var(--total-height) * -60px + 30px));
   }
+
   // --------------------------
 
 
@@ -140,6 +151,7 @@ img
     font-size: 14px;
     color: #555;
   }
+
   // --------------------------
 
 
@@ -171,6 +183,7 @@ img
     width: 25px;
     height: 25px;
   }
+
   // --------------------------
 
 
@@ -180,6 +193,13 @@ img
     border-radius: 20px;
     color: white;
     margin: 60px 0;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .form-contacts.visible {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   .form-contacts__header {
@@ -237,6 +257,7 @@ img
   .form-contacts__input-submit:hover {
     opacity: 0.7;
   }
+
   // --------------------------
 
 
@@ -246,26 +267,32 @@ img
     display: flex;
     justify-content: space-between;
   }
+
   .footer__header {
     text-transform: uppercase;
   }
+
   .footer__description {
     display: block;
     margin-bottom: 20px;
   }
+
   .footer__link {
     display: flex;
     align-items: center;
     gap: 10px;
     transition: opacity 0.2s ease;
   }
+
   .footer__link:hover {
     opacity: 0.7;
   }
+
   .footer__link.footer__link_telephone {
     font-size: 24px;
     text-decoration: underline;
   }
+
   .footer__link img {
     width: 30px;
     height: 30px;
@@ -292,9 +319,9 @@ img
     </header>
 
     <main class="main">
-      <section class="section">
-        <header class="section__header" id="products">Наша продукция</header>
-        <div class="gallery">
+      <section class="section" id="products">
+        <header class="section__header">Наша продукция</header>
+        <div class="gallery" id="gallery">
           <img class="gallery__image" src="../../res/res-site-2/phone1.jpg" alt="phone">
           <img class="gallery__image" src="../../res/res-site-2/phone2.webp" alt="phone">
           <img class="gallery__image" src="../../res/res-site-2/phone3.webp" alt="phone">
@@ -303,10 +330,11 @@ img
 
       <hr>
 
-      <section class="section">
-        <header class="section__header" id="questions">Кто мы?</header>
+      <section class="section" id="questions">
+        <header class="section__header">Кто мы?</header>
         <p class="section__paragraph">Мы — ваш надёжный партнёр в мире смартфонов. Наша компания занимается продажей
-          широкого ассортимента современных мобильных устройств от ведущих производителей. В нашем ассортименте вы найдёте
+          широкого ассортимента современных мобильных устройств от ведущих производителей. В нашем ассортименте вы
+          найдёте
           смартфоны на любой вкус и кошелёк.</p>
       </section>
 
@@ -327,8 +355,8 @@ img
         </ul>
       </section>
 
-      <section class="section">
-        <details id="about" class="details" open>
+      <section class="section" id="about">
+        <details class="details" id="details" open>
           <summary class="details__summary">Наши клиенты</summary>
           <div class="details__text">
             <div><img src="../../res/res-site-2/logo.svg" alt="logo">Газпром</div>
@@ -344,8 +372,8 @@ img
         </details>
       </section>
 
-      <section class="section">
-        <form id="contacts" class="form-contacts" action="javascript:alert('Форма отправлена')">
+      <section class="section" id="contacts">
+        <form id="form-contacts" class="form-contacts">
           <header class="form-contacts__header">Заказать звонок</header>
           <div class="form-contacts__description">Просто оставьте свои данные</div>
 
@@ -363,16 +391,19 @@ img
             <div class="form-contacts__input-radio-group">
               <label for="form-contacts__input-text-1" class="input-container__label">Продажа</label>
               <input id="form-contacts__input-text-1" class="input-container__input" type="radio" name="question-theme"
+                     value="sell"
                      required>
             </div>
             <div class="form-contacts__input-radio-group">
               <label for="form-contacts__input-text-2" class="input-container__label">Ремонт</label>
               <input id="form-contacts__input-text-2" class="input-container__input" type="radio" name="question-theme"
+                     value="fix"
                      required>
             </div>
             <div class="form-contacts__input-radio-group">
               <label for="form-contacts__input-text-3" class="input-container__label">Консультация</label>
               <input id="form-contacts__input-text-3" class="input-container__input" type="radio" name="question-theme"
+                     value="info"
                      required>
             </div>
           </div>
@@ -392,14 +423,16 @@ img
 
         <a class="footer__link" href="https://vk.com/bmstu1830" target="_blank"><img src="../../res/icons/vk-logo.svg"
                                                                                      alt="vk"><span>VK</span></a>
-        <a class="footer__link" href="https://t.me/bmstu1830" target="_blank"><img src="../../res/icons/telegram-logo.svg"
-                                                                                   alt="tg"><span>TG</span></a>
+        <a class="footer__link" href="https://t.me/bmstu1830" target="_blank"><img
+          src="../../res/icons/telegram-logo.svg"
+          alt="tg"><span>TG</span></a>
         <a class="footer__link footer__link_email" href="mailto:contacts@mobile.phones" target="_blank"><img
           src="../../res/icons/email-logo.svg" alt="email"><span>contacts@mobile.phones</span></a>
       </div>
 
       <div class="footer__right-column">
-        <a class="footer__link footer__link_telephone" href="tel:+79999999999" target="_blank"><span>+7 999 999 99 99</span></a>
+        <a class="footer__link footer__link_telephone" href="tel:+79999999999"
+           target="_blank"><span>+7 999 999 99 99</span></a>
       </div>
     </footer>
   </div>
@@ -409,6 +442,188 @@ img
 export default {
   props: {
     styled: Boolean,
+    scripted: Boolean,
+  },
+
+  mounted() {
+    this.addPageScripts();
+  },
+
+  methods: {
+    addPageScripts() {
+      if (!this.scripted) {
+        return;
+      }
+      // ------------------
+      const formElement = document.getElementById('form-contacts');
+      const inputNameElement = document.getElementById('form-contacts__input-name');
+      const inputPhoneElement = document.getElementById('form-contacts__input-phone');
+      const inputTextsElement = document.getElementById('form-contacts__input-text');
+      formElement.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!await confirm('Подтвердите отправку данных')) {
+          return;
+        }
+        const response = await fetch('/send-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: inputNameElement.value,
+            phone: inputPhoneElement.value,
+            question_theme: document.querySelector('input[name="question-theme"]:checked').value,
+            texts: inputTextsElement.value,
+          }),
+        });
+        if (!response.ok) {
+          return;
+        }
+        formElement.innerHTML = '<header class="form-contacts__header">Спасибо<br>Мы свяжемся с вами!</header>';
+      });
+      // ------------------
+
+      window.confirm = (message = '') => {
+        // Create promise and save it's resolving function
+        let resolvePromiseFunction;
+        const promise = new Promise((resolve) => {
+          resolvePromiseFunction = resolve;
+        });
+
+        // Background
+        const modalElementRoot = document.createElement('div');
+        modalElementRoot.style.position = 'fixed';
+        modalElementRoot.style.inset = '0';
+        modalElementRoot.style.background = '#00000080';
+        modalElementRoot.style.backdropFilter = 'blur(10px)';
+
+        // Form
+        const modalElementForm = document.createElement('div');
+        modalElementRoot.appendChild(modalElementForm);
+        Object.assign(modalElementForm.style, {
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          minWidth: '300px',
+          background: '#222',
+          borderRadius: '20px',
+          padding: '40px',
+          color: '#fff',
+        });
+
+        // Text in form
+        const modalElementFormText = document.createElement('div');
+        modalElementForm.appendChild(modalElementFormText);
+        modalElementFormText.style.textAlign = 'center';
+        modalElementFormText.style.fontSize = '18px';
+        modalElementFormText.style.marginBottom = '20px';
+        modalElementFormText.innerText = message;
+
+        // Buttons in form
+        const modalElementFormButtons = [document.createElement('button'), document.createElement('button')];
+        modalElementFormButtons.forEach(button => {
+          modalElementForm.appendChild(button);
+          button.style.padding = '10px';
+          button.style.background = '#111';
+          button.style.borderRadius = '4px';
+          button.style.cursor = 'pointer';
+          button.style.width = '50%';
+        });
+        modalElementFormButtons[0].innerText = 'Да';
+        modalElementFormButtons[0].addEventListener('click', () => {
+          resolvePromiseFunction(true);
+          modalElementRoot.remove();
+        });
+        modalElementFormButtons[1].innerText = 'Нет';
+        modalElementFormButtons[1].addEventListener('click', () => {
+          resolvePromiseFunction(false);
+          modalElementRoot.remove();
+        });
+
+        // Add root element into DOM
+        document.body.appendChild(modalElementRoot);
+
+        return promise;
+      };
+      // ------------------
+
+      const galleryElements = document.querySelectorAll('#gallery > *');
+      document.addEventListener('mousemove', (event) => {
+        galleryElements.forEach(element => {
+          if (element.hasAttribute('data-is-fullscreen')) {
+            return;
+          }
+          // Easy
+          element.setAttribute('style', `
+            --x: ${event.pageX};
+            --y: ${event.pageY};
+            --total-width: ${window.innerWidth};
+            --total-height: ${window.innerHeight};
+          `);
+
+          // Hard
+          // const box = element.getBoundingClientRect();
+          // const x = box.left - event.pageX;
+          // const y = box.top - event.pageY;
+          // const rotationValue = 60;
+          // const translationValue = 60;
+          // element.style.transform = `
+          //   rotateX(${y / window.innerHeight * -rotationValue}deg)
+          //   rotateY(${x / window.innerWidth * rotationValue}deg)
+          //   translateX(${x / window.innerWidth * -translationValue}px)
+          //   translateY(${y / window.innerHeight * -translationValue}px)
+          // `
+        });
+      });
+      // ------------------
+
+      const formHTMLElement = document.getElementById('form-contacts');
+      document.body.addEventListener('scroll', () => {
+        const box = formHTMLElement.getBoundingClientRect();
+
+        if (box.top < window.innerHeight * 0.8 && box.bottom > window.innerHeight * 0.2) {
+          formHTMLElement.classList.add('visible');
+          return;
+        }
+        formHTMLElement.classList.remove('visible');
+      });
+      // ------------------
+
+      const detailsElement = document.getElementById('details');
+      detailsElement.style.overflow = 'hidden'
+      detailsElement.style.transition = 'max-height 0.4s ease'
+      detailsElement.addEventListener('click', () => {
+        if (!detailsElement.hasAttribute('open')) {
+          detailsElement.style.maxHeight = '999px';
+          return;
+        }
+        detailsElement.style.maxHeight = '20px';
+      });
+      // ------------------
+
+      const galleryImageElements = document.querySelectorAll('#gallery > *');
+      galleryImageElements.forEach(element => {
+        element.addEventListener('click', () => {
+          element.toggleAttribute('data-is-fullscreen')
+          if (element.hasAttribute('data-is-fullscreen')) {
+            element.style.position = 'fixed';
+            element.style.zIndex = '999';
+            element.style.top = '0';
+            element.style.left = '0';
+            element.style.width = '100%';
+            element.style.height = '100%';
+            element.style.background = '#00000080';
+            element.style.objectFit = 'contain';
+            element.style.transform = 'none';
+          } else {
+            element.style.position = 'relative';
+            element.style.width = '';
+            element.style.height = '';
+          }
+        });
+      });
+    }
   }
 }
 </script>

@@ -261,7 +261,7 @@ export default {
       }
       let userName;
       while (!userName) {
-        userName = await this.$modal.prompt("Введите ваше имя", "Имя будет отображаться для всех. Да, сюда можно написать \"ХУХ\", но, пожалуйста, без бан-вордов", "", "Ваше имя...")
+        userName = await this.$modal.prompt("Введите ваше имя", "Имя будет отображаться для всех. Да, сюда можно написать \"ХУХ\", но давайте, пожалуйста, без бан-вордов", "", "Ваше имя...")
       }
       this.$ws.send('login_user', {username: userName});
       let responsePromiseResolveFunc;
