@@ -219,6 +219,7 @@ img
     padding: 10px 0;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 15px;
   }
 
@@ -256,6 +257,42 @@ img
 
   .form-contacts__input-submit:hover {
     opacity: 0.7;
+  }
+  // --------------------------
+
+
+  .form-calculator {
+    padding: 40px;
+    color: white;
+  }
+
+  .form-calculator__header {
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 20px;
+  }
+
+  .form-calculator__input-container {
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .input-calculator__label {
+    min-width: 200px;
+  }
+
+  .input-calculator__input {
+    flex: 1;
+    max-width: 400px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    background: #353535;
+    border: none;
   }
 
   // --------------------------
@@ -383,7 +420,7 @@ img
                    placeholder="Иван Иванов" required>
           </div>
           <div class="form-contacts__input-container">
-            <label for="form-contacts__input-phone" class="input-container__label">Номер телефона:</label>
+            <label for="form-contacts__input-phone" class="input-container__label">Номер телефона</label>
             <input id="form-contacts__input-phone" class="input-container__input" type="tel" name="tel"
                    placeholder="8-XXX-XXX-XX-XX" required>
           </div>
@@ -412,6 +449,24 @@ img
             <textarea id="form-contacts__input-text" class="input-container__input" name="name"></textarea>
           </div>
           <input class="form-contacts__input-submit" type="submit" value="Отправить">
+        </form>
+      </section>
+
+
+      <section class="section">
+        <form id="form-calculator" class="form-calculator">
+          <header class="form-calculator__header">Мы расчитаем для вас стоимость</header>
+
+          <div class="form-calculator__input-container">
+            <label for="form-calculator__input-cost" class="input-calculator__label">Стоимость телефона</label>
+            <input id="form-calculator__input-cost" class="input-calculator__input" type="number" name="cost" placeholder="12000" required>
+          </div>
+          <div class="form-calculator__input-container">
+            <label for="form-calculator__input-count" class="input-calculator__label">Количество телефонов</label>
+            <input id="form-calculator__input-count" class="input-calculator__input" type="number" name="count" placeholder="3" required>
+          </div>
+
+          <div class="form-calculator__result">Общая стоимость: <span id="form-calculator__result"></span></div>
         </form>
       </section>
     </main>
