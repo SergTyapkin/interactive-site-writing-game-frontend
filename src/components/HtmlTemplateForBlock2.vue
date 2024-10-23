@@ -246,6 +246,13 @@ img
     display: flex;
     justify-content: space-between;
   }
+  .footer__header {
+    text-transform: uppercase;
+  }
+  .footer__description {
+    display: block;
+    margin-bottom: 20px;
+  }
   .footer__link {
     display: flex;
     align-items: center;
@@ -380,6 +387,9 @@ img
 
     <footer class="footer">
       <div class="footer__left-column">
+        <h2 class="footer__header">MOBILE STORE</h2>
+        <small class="footer__description">Ваш надежный проводник в мир мобильных телефонов</small>
+
         <a class="footer__link" href="https://vk.com/bmstu1830" target="_blank"><img src="../../res/icons/vk-logo.svg"
                                                                                      alt="vk"><span>VK</span></a>
         <a class="footer__link" href="https://t.me/bmstu1830" target="_blank"><img src="../../res/icons/telegram-logo.svg"
