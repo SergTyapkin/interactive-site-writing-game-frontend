@@ -59,7 +59,7 @@ import {VAceEditor} from 'vue3-ace-editor';
 import './ace-config';
 import validateModel from "@sergtyapkin/models-validator";
 import {FragmentModel} from "~/models";
-import {Milestones} from "~/utils/constants";
+
 
 export default {
   components: {VAceEditor},
@@ -86,7 +86,8 @@ export default {
       return;
     }
     this.fragment = validateModel(FragmentModel, fragmentData);
-    this.milestoneData = Milestones.find(milestone => String(milestone.id) === String(this.fragment.milestoneId));
+    const allMilestones = this.$localStorage.loadAllMilestones();
+    this.milestoneData = allMilestones.find(milestone => String(milestone.id) === String(this.fragment.milestoneId));
 
     this.codeText = this.fragment.text;
 

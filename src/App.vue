@@ -118,7 +118,7 @@ animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
     <div></div>
   </div>
 
-  <Header :user="user"></Header>
+  <Header></Header>
 
   <div class="wrapper">
     <CircleLoading v-if="!websocketOpened || !$user.isSignedIn" class="loading"></CircleLoading>

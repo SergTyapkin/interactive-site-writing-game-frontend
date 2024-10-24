@@ -1,6 +1,10 @@
+import validateModel from "@sergtyapkin/models-validator";
+import {MilestoneModel} from "~/models";
+
 const _PropertyNames = {
   user: 'user',
   selectedFragment: 'selected-fragment',
+  allMilestones: 'all-milestones',
 }
 
 
@@ -30,5 +34,17 @@ export default class LocalStorageManager {
   }
   removeSelectedFragment() {
     localStorage.removeItem(_PropertyNames.selectedFragment);
+  }
+
+
+  // ---- All Milestones ----
+  saveAllMilestones(milestonesData) {
+    localStorage.setItem(_PropertyNames.allMilestones, JSON.stringify(milestonesData));
+  }
+  loadAllMilestones() {
+    return JSON.parse(localStorage.getItem(_PropertyNames.allMilestones)).map(milestone => validateModel(MilestoneModel, milestone));
+  }
+  removeAllMilestones() {
+    localStorage.removeItem(_PropertyNames.allMilestones);
   }
 }

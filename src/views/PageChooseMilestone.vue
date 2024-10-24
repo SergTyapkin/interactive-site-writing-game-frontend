@@ -76,7 +76,7 @@
     <header v-else class="header">Выбор этапа</header>
 
     <ul class="milestones-list">
-      <li v-for="milestone in Milestones" class="milestone-container">
+      <li v-for="milestone in milestones" class="milestone-container">
         <header class="number">{{ milestone.id }}</header>
         <div @click="chooseMilestone(milestone)" class="milestone">
           <div class="top-string">
@@ -91,7 +91,6 @@
 </template>
 
 <script>
-import {Milestones} from "~/utils/constants";
 import CircleLoading from "~/App.vue";
 
 export default {
@@ -102,11 +101,12 @@ export default {
 
       loading: false,
 
-      Milestones,
+      milestones: [],
     }
   },
 
   mounted() {
+    this.getAllMilestones();
   },
 
   methods: {
@@ -137,6 +137,21 @@ export default {
       this.loading = false;
       this.$router.push({name: 'play'});
     },
+
+    async getAllMilestones() {
+      this.$ws.send('get_all_milestones', {});
+
+      let responsePromiseResolveFunc;
+      const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
+      this.$ws.handlers.all_milestones = (data) => {
+        this.$localStorage.saveAllMilestones(data.milestones);
+        responsePromiseResolveFunc();
+      }
+      this.loading = true;
+      await waitForResponsePromise;
+      this.milestones = this.$localStorage.loadAllMilestones();
+      this.loading = false;
+    }
   }
 }
 </script>

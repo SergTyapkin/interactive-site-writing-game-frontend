@@ -68,6 +68,7 @@ export default {
       this.$ws.send('logout_user', {id: this.$user.id, username: this.$user.username});
       this.$store.dispatch('DELETE_USER', this.$localStorage);
       this.$localStorage.removeSelectedFragment();
+      this.$localStorage.removeAllMilestones();
       await this.$app.loginUser();
       this.$router.push({name: 'chooseMilestone'});
     }

@@ -48,3 +48,14 @@ export const FragmentShortModel = {
   description: String,
   text: String,
 }
+
+export const MilestoneModel = {
+  id: String,
+  year: Number,
+  name: String,
+  description: String,
+  codeLanguage: {
+    type: String,
+    from: 'code_language',
+  }
+}

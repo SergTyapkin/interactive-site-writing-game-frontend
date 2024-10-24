@@ -63,7 +63,7 @@
 <template>
   <div class="root-admin_">
     <Selector v-model="selectedMilestoneId" name="milestone" class="selector_" @update:modelValue="getAllTexts()">
-      <option v-for="milestone in Milestones" :value="milestone.id">{{ milestone.id }}. {{ milestone.name }}</option>
+      <option v-for="milestone in allMilestones" :value="milestone.id">{{ milestone.id }}. {{ milestone.name }}</option>
     </Selector>
 
     <div class="input-groups-container_">
@@ -126,11 +126,10 @@
 <script>
 import {VAceEditor} from "vue3-ace-editor";
 import Selector from "~/components/Selector.vue";
-import {Milestones} from "~/utils/constants";
 import validateModel from "@sergtyapkin/models-validator";
 import {FragmentModel, FragmentShortModel} from "~/models";
 import HtmlTemplateForBlock2 from "~/components/HtmlTemplateForBlock2.vue";
-import {nextTick} from "vue";
+
 
 export default {
   components: {HtmlTemplateForBlock2, Selector, VAceEditor},
@@ -139,6 +138,7 @@ export default {
     return {
       selectedMilestoneId: null,
 
+      allMilestones: [],
       allFragments: [],
       fontSize: 10,
       isAdjustRendererSize: false,
@@ -151,17 +151,17 @@ export default {
 
       customStylesComponent: document.getElementById('custom-styles-component'),
 
-      Milestones,
     }
   },
 
   computed: {
     selectedMilestone() {
-      return Milestones.find(milestone => String(milestone.id) === String(this.selectedMilestoneId));
+      return this.allMilestones.find(milestone => String(milestone.id) === String(this.selectedMilestoneId));
     },
   },
 
   mounted() {
+    this.allMilestones = this.$localStorage.loadAllMilestones();
     this.maxRendererHeightToScreen = window.innerHeight - this.$refs.renderersContainer.getBoundingClientRect().top - 20;
 
 
