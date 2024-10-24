@@ -99,19 +99,25 @@
 
       <div class="renderers-container_" ref="renderersContainer"
            :style="{'--total-height': isAdjustRendererSize ? totalRendererHeight : 0, '--max-height': maxRendererHeightToScreen}">
-        <section v-if="selectedMilestone?.id === 1" class="renderer_ html_" v-html="codeText"></section>
+        <transition name="opacity" mode="out-in">
+          <section v-if="selectedMilestone?.id === 1" class="renderer_ html_" v-html="codeText"></section>
 
-        <section v-else-if="selectedMilestone?.id === 2" class="renderer_ css_">
-          <HtmlTemplateForBlock2 ref="renderer"></HtmlTemplateForBlock2>
-        </section>
+          <section v-else-if="selectedMilestone?.id === 2" class="renderer_ css_">
+            <HtmlTemplateForBlock2 ref="renderer"></HtmlTemplateForBlock2>
+          </section>
 
-        <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
-          <HtmlTemplateForBlock2 styled ref="renderer"></HtmlTemplateForBlock2>
-        </section>
+          <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
+            <HtmlTemplateForBlock2 styled ref="renderer"></HtmlTemplateForBlock2>
+          </section>
 
-        <section v-else-if="selectedMilestone?.id === 4" class="renderer_ js_spa_">
-          <HtmlTemplateForBlock2 styled scripted ref="renderer"></HtmlTemplateForBlock2>
-        </section>
+          <section v-else-if="selectedMilestone?.id === 4" class="renderer_ js_spa_">
+            <HtmlTemplateForBlock2 styled scripted ref="renderer"></HtmlTemplateForBlock2>
+          </section>
+
+          <section v-else-if="selectedMilestone?.id === 5" class="renderer_ vue_">
+            <HtmlTemplateForBlock2 styled scripted-spa ref="renderer"></HtmlTemplateForBlock2>
+          </section>
+        </transition>
       </div>
     </main>
   </div>

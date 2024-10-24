@@ -125,9 +125,9 @@ img
     object-fit: cover;
     border-radius: 10px;
     transform: rotateX(calc(var(--y) / var(--total-height) * -60deg + 30deg)) \
-        rotateY(calc(var(--x) / var(--total-width) * 60deg - 30deg)) \
-        translateX(calc(var(--x) / var(--total-width) * -60px + 30px)) \
-        translateY(calc(var(--y) / var(--total-height) * -60px + 30px));
+    rotateY(calc(var(--x) / var(--total-width) * 60deg - 30deg)) \
+    translateX(calc(var(--x) / var(--total-width) * -60px + 30px)) \
+    translateY(calc(var(--y) / var(--total-height) * -60px + 30px));
   }
 
   // --------------------------
@@ -197,6 +197,7 @@ img
     transform: translateX(-30px);
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
+
   .form-contacts.visible {
     opacity: 1;
     transform: translateX(0);
@@ -258,6 +259,7 @@ img
   .form-contacts__input-submit:hover {
     opacity: 0.7;
   }
+
   // --------------------------
 
 
@@ -348,14 +350,14 @@ img
       </div>
 
       <nav class="navbar">
-        <a class="navbar__link" href="#products">Продукция</a>
-        <a class="navbar__link" href="#questions">Вопросы</a>
-        <a class="navbar__link" href="#about">О нас</a>
-        <a class="navbar__link" href="#contacts">Контакты</a>
+        <a class="navbar__link" href="/products">Продукция</a>
+        <a class="navbar__link" href="/questions">Вопросы</a>
+        <a class="navbar__link" href="/about">О нас</a>
+        <a class="navbar__link" href="/contacts">Контакты</a>
       </nav>
     </header>
 
-    <main class="main">
+    <main class="main" id="main">
       <section class="section" id="products">
         <header class="section__header">Наша продукция</header>
         <div class="gallery" id="gallery">
@@ -375,7 +377,7 @@ img
           смартфоны на любой вкус и кошелёк.</p>
       </section>
 
-      <section class="section">
+      <section class="section" id="listing">
         <ul class="section__list">
           <li class="list__item">
             <header class="item__header">Доставка до двери</header>
@@ -453,17 +455,19 @@ img
       </section>
 
 
-      <section class="section">
+      <section class="section" id="calculator">
         <form id="form-calculator" class="form-calculator" action="javascript:void(0)">
           <header class="form-calculator__header">Мы расчитаем для вас стоимость</header>
 
           <div class="form-calculator__input-container">
             <label for="form-calculator__input-cost" class="input-calculator__label">Стоимость телефона</label>
-            <input id="form-calculator__input-cost" class="input-calculator__input" type="number" min="0" name="cost" placeholder="12000" required>
+            <input id="form-calculator__input-cost" class="input-calculator__input" type="number" min="0" name="cost"
+                   placeholder="12000" required>
           </div>
           <div class="form-calculator__input-container">
             <label for="form-calculator__input-count" class="input-calculator__label">Количество телефонов</label>
-            <input id="form-calculator__input-count" class="input-calculator__input" type="number" min="0" name="count" placeholder="3" required>
+            <input id="form-calculator__input-count" class="input-calculator__input" type="number" min="0" name="count"
+                   placeholder="3" required>
           </div>
 
           <div class="form-calculator__result">Общая стоимость: <span id="form-calculator__result">0</span> $</div>
@@ -500,6 +504,7 @@ export default {
   props: {
     styled: Boolean,
     scripted: Boolean,
+    scriptedSpa: Boolean,
   },
 
   data() {
@@ -521,9 +526,14 @@ export default {
     },
 
     addPageScripts() {
-      if (!this.scripted) {
-        return;
+      if (this.scriptedSpa) {
+        this.addJsSpaScripts();
+      } else if (this.scripted) {
+        this.addCommonjsScripts();
       }
+    },
+
+    addCommonjsScripts() {
       // ------------------
       // Получаем HTML-элементы
       const formElement = document.getElementById('form-contacts');
@@ -717,11 +727,13 @@ export default {
       const inputCostElement = document.getElementById('form-calculator__input-cost');
       const inputCountElement = document.getElementById('form-calculator__input-count');
       const calculatedResultElement = document.getElementById('form-calculator__result');
+
       // Функция подсчета и обновления результата
       function calculateAndSetResult() {
         const result = +inputCostElement.value * +inputCountElement.value;
         calculatedResultElement.innerText = String(result) || '0';
       }
+
       // Добавляем EventListener'ы для вызова функции обновления при вводе данных в инпуты
       inputCostElement.addEventListener('input', calculateAndSetResult);
       inputCountElement.addEventListener('input', calculateAndSetResult);
@@ -734,6 +746,169 @@ export default {
       logoElement.addEventListener('contextmenu', () => {
         alert(`Дата сборки: 1 апр. 2023, 17:15\nВерсия: Beta-1.8.1`)
       });
+    },
+
+    addJsSpaScripts() {
+      // -------------------------
+      // Определяем класс роутера
+      class Router {
+        // Перечислим для удобства все поля этого класса
+        rootElement;
+        routes;
+        currentRoute = null;
+
+        constructor(element, routes) {
+          // Если element не передан или это не объект класса HTMLElement, показываем ошибку и выходим
+          if (!element instanceof HTMLElement) {
+            console.error(`Element must be an instance of HTMLElement!`);
+            return;
+          }
+          // Сохраняем элемент и роуты в поля класса
+          this.rootElement = element;
+          this.routes = routes;
+          // Запускаем метод установки хэндлеров на события перехода по страницам.
+          // Этот метод реализовывает кто-то другой в другом фрагменте
+          this.setHrefEventCatchers();
+        }
+      }
+      // Добавить Router как глобавльную константу, прописав его в свойство window
+      window.Router = Router;
+      // -------------------------
+
+      Router.prototype.setHrefEventCatchers = function() {
+        // Добавляем EventListener на <body>, в котором обраабтываем клики на ссылки
+        document.body.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          // Если кликнут элемент с тэгом <a>, и его атрибут href является внутренней ссылкой (начинается не с http:// или https://,
+          // не с tel:, mailto:, и др.), а так же не является якорной ссылкой (начинается не с #)
+          const hrefAttr = clickedEl.getAttribute('href');
+          if (
+            (clickedEl.tagName === 'A') &&
+            (!(/^(\w+:|#)/gi.test(hrefAttr || '')))
+          ) {
+            // Логируем событие перехвата ссылки, отменяем браузерный обычный переход по ссылке
+            console.log("Router catches internal link route to:", hrefAttr);
+            event.preventDefault();
+            // Вызываем метод перехода на страницу.
+            // Этот метод реализовывает кто-то другой в другом фрагменте
+            this.goto(hrefAttr);
+          }
+        });
+      }
+      // -------------------------
+
+      Router.prototype.goto = function(path) {
+        // Выполняем поиск по ключам роутов из this.routes. Если подходящий не найден, логируем ошибку и выходим
+        const routeKey = Object.keys(this.routes).find(regExpStr => new RegExp(regExpStr).test(path));
+        if (!routeKey) {
+          console.error(`RegExp for papth ${path} not found in provided routes`)
+          return;
+        }
+        // Если подходящий роут найден, запускаем метод render, в который передаем объект найденного роута
+        // Этот метод реализовывает кто-то другой в другом фрагменте
+        this.render(this.routes[routeKey]);
+        // Добавляем ссылку в историю браузера (сама он не добавится, ведь переход браузера по ссылке мы перехватили)
+        // Этот метод реализовывает кто-то другой в другом фрагменте
+        this.pushPathToHistory(path);
+      }
+      // -------------------------
+
+      Router.prototype.render = async function(route) {
+        // Изменяем заголовок страницы документа на route.title
+        document.title = route.title;
+        // Вызываем метод анимации перехода по страницам и ожидаем разрешения на отрисовку новой страницы
+        await this.animateElementShowHide();
+        // Заменяем всю разметку внутри рабочего элемента на route.html
+        this.rootElement.innerHTML = route.html;
+        // Ждем разбора и отрисовки браузером вставленного html (когда элементы появятся в DOM)
+        // Этот метод реализовывает кто-то другой в другом фрагменте
+        await this.nextTick();
+        // Вызываем функцию unmount прыдыдущей страницы, вызываем функцию route.mount новой страницы
+        if (this.currentRoute) {
+          this.currentRoute.unmount();
+        }
+        route.mount();
+        this.currentRoute = route;
+      }
+      // -------------------------
+
+      Router.prototype.animateElementShowHide = function() {
+        // Создаем промис, который будет возвращен из фукции, и сохраняем его функцию resolve, чтобы он мог разрешится,
+        // когда разрешено будет вставить в рабочий элемент html-разметку новой страницы
+        let resolvePromiseFunction;
+        const promise = new Promise(resolve => {resolvePromiseFunction = resolve});
+        // Добавляем рабочему элементу стили для плавного скрытия содержимого
+        this.rootElement.style.transition = 'opacity 0.2s ease';
+        this.rootElement.style.opacity = '0';
+        // Через *выберите сколько* миллисекунд резолвим промис (из-за этого сразу/ вставится html-разметка новой страницы) и плавно показываем
+        setTimeout(() => {
+          resolvePromiseFunction();
+          this.rootElement.style.opacity = '1';
+        }, 200);
+        return promise;
+      }
+      // -------------------------
+
+      Router.prototype.nextTick = async function() {
+        // Создаем промис, который будет возвращен из фукции, и сохраняем его функцию resolve, чтобы выполнить её позже
+        let resolvePromiseFunction;
+        const promise = new Promise(resolve => {
+          resolvePromiseFunction = resolve
+        });
+        // Ожидаем появления элементов на странице и после этого вызываем функцию разрешения промиса
+        requestAnimationFrame(resolvePromiseFunction);
+        return promise;
+      }
+      // -------------------------
+
+      Router.prototype.pushPathToHistory = function(path) {
+        // Вызываем функцию добавления ссылки на страницу в браузерную историю
+        history.pushState(null, null, path);
+      }
+      // -------------------------
+
+      // Создаём объект роутера
+      // Пример параметра routes:
+      // {
+      //   '/some-path': {
+      //      title: 'Название страницы',
+      //      html: '<h1>HTML-код страницы</h1>',
+      //      mount() {},
+      //      unmount() {},
+      //   },
+      //   ...
+      // }
+      new Router(
+        document.getElementById('main'),
+        {
+          '/products': {
+            title: 'Наша продукция',
+            html: document.getElementById('products').outerHTML,
+            mount() {},
+            unmount() {},
+          },
+          '/questions': {
+            title: 'Кто мы?',
+            html: document.getElementById('questions').outerHTML,
+            mount() {},
+            unmount() {},
+          },
+          '/about': {
+            title: 'О нас',
+            html: document.getElementById('listing').outerHTML + document.getElementById('about').outerHTML,
+            mount() {},
+            unmount() {},
+          },
+          '/contacts': {
+            title: 'Контакты',
+            html: document.getElementById('contacts').outerHTML + document.getElementById('calculator').outerHTML,
+            mount() {
+              document.getElementById('form-contacts').classList.add('visible')
+            },
+            unmount() {},
+          },
+        }
+      )
     }
   }
 }
