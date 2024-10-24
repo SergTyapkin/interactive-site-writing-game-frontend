@@ -350,10 +350,10 @@ img
       </div>
 
       <nav class="navbar">
-        <a class="navbar__link" href="/products">Продукция</a>
-        <a class="navbar__link" href="/questions">Вопросы</a>
-        <a class="navbar__link" href="/about">О нас</a>
-        <a class="navbar__link" href="/contacts">Контакты</a>
+        <a class="navbar__link" :href="`${onlyAnchorLinks ? '#' : '/'}products`">Продукция</a>
+        <a class="navbar__link" :href="`${onlyAnchorLinks ? '#' : '/'}questions`">Вопросы</a>
+        <a class="navbar__link" :href="`${onlyAnchorLinks ? '#' : '/'}about`">О нас</a>
+        <a class="navbar__link" :href="`${onlyAnchorLinks ? '#' : '/'}contacts`">Контакты</a>
       </nav>
     </header>
 
@@ -505,6 +505,7 @@ export default {
     styled: Boolean,
     scripted: Boolean,
     scriptedSpa: Boolean,
+    onlyAnchorLinks: Boolean,
   },
 
   data() {
@@ -769,30 +770,34 @@ export default {
           // Запускаем метод установки хэндлеров на события перехода по страницам.
           // Этот метод реализовывает кто-то другой в другом фрагменте
           this.setHrefEventCatchers();
+          // Запускаем метод перехвата браузерных кнопок назад/вперед
+          // Этот метод реализовывает кто-то другой в другом фрагменте
+          this.setPopstateHandler();
         }
       }
-      // Добавить Router как глобавльную константу, прописав его в свойство window
+      // Добавить Router как глобавльную константу, прописав его как свойство window
       window.Router = Router;
       // -------------------------
 
       Router.prototype.setHrefEventCatchers = function() {
-        // Добавляем EventListener на <body>, в котором обраабтываем клики на ссылки
+        // Добавляем EventListener на <body>, в котором обратываем клики на ссылки
         document.body.addEventListener('click', (event) => {
           const clickedEl = event.target;
-          // Если кликнут элемент с тэгом <a>, и его атрибут href является внутренней ссылкой (начинается не с http:// или https://,
-          // не с tel:, mailto:, и др.), а так же не является якорной ссылкой (начинается не с #)
+          // Ничего не делаем, если кликнут не элемент с тэгом <a>, и его атрибут href не является внутренней ссылкой (начинается с http:// или https://,
+          // с tel:, mailto:, и др.), или является якорной ссылкой (начинается не с #). Это удобно проверить с помощью регулярного выражения
           const hrefAttr = clickedEl.getAttribute('href');
           if (
-            (clickedEl.tagName === 'A') &&
-            (!(/^(\w+:|#)/gi.test(hrefAttr || '')))
+            (clickedEl.tagName !== 'A') ||
+            (/^(\w+:|#)/gi.test(hrefAttr || ''))
           ) {
-            // Логируем событие перехвата ссылки, отменяем браузерный обычный переход по ссылке
-            console.log("Router catches internal link route to:", hrefAttr);
-            event.preventDefault();
-            // Вызываем метод перехода на страницу.
-            // Этот метод реализовывает кто-то другой в другом фрагменте
-            this.goto(hrefAttr);
+            return;
           }
+          // Логируем событие перехвата ссылки, отменяем браузерный обычный переход по ссылке
+          console.log("Router catches internal link route to:", hrefAttr);
+          event.preventDefault();
+          // Вызываем метод перехода на страницу.
+          // Этот метод реализовывает кто-то другой в другом фрагменте
+          this.goto(hrefAttr);
         });
       }
       // -------------------------
@@ -817,6 +822,7 @@ export default {
         // Изменяем заголовок страницы документа на route.title
         document.title = route.title;
         // Вызываем метод анимации перехода по страницам и ожидаем разрешения на отрисовку новой страницы
+        // Этот метод реализовывает кто-то другой в другом фрагменте
         await this.animateElementShowHide();
         // Заменяем всю разметку внутри рабочего элемента на route.html
         this.rootElement.innerHTML = route.html;
@@ -835,7 +841,7 @@ export default {
       Router.prototype.animateElementShowHide = function() {
         // Создаем промис, который будет возвращен из фукции, и сохраняем его функцию resolve, чтобы он мог разрешится,
         // когда разрешено будет вставить в рабочий элемент html-разметку новой страницы
-        let resolvePromiseFunction;
+        let resolvePromiseFunction; // Сюда можно сохранить функцию resolve
         const promise = new Promise(resolve => {resolvePromiseFunction = resolve});
         // Добавляем рабочему элементу стили для плавного скрытия содержимого
         this.rootElement.style.transition = 'opacity 0.2s ease';
@@ -849,11 +855,11 @@ export default {
       }
       // -------------------------
 
-      Router.prototype.nextTick = async function() {
+      Router.prototype.nextTick = function() {
         // Создаем промис, который будет возвращен из фукции, и сохраняем его функцию resolve, чтобы выполнить её позже
-        let resolvePromiseFunction;
+        let resolvePromiseFunction; // Сюда можно сохранить функцию resolve
         const promise = new Promise(resolve => {
-          resolvePromiseFunction = resolve
+          resolvePromiseFunction = resolve;
         });
         // Ожидаем появления элементов на странице и после этого вызываем функцию разрешения промиса
         requestAnimationFrame(resolvePromiseFunction);
@@ -867,8 +873,19 @@ export default {
       }
       // -------------------------
 
-      // Создаём объект роутера
-      // Пример параметра routes:
+      Router.prototype.setPopstateHandler = function() {
+        // Добавляем прослушивание события перехода по браузерной истории.
+        window.addEventListener('popstate', () => {
+          // При срабатывании события вызываем метод goto передав в него текст, являющийся частью "path" от полного URL в адресной строке
+          // Этот метод реализовывает кто-то другой в другом фрагменте
+          this.goto(location.pathname);
+        });
+      }
+      // -------------------------
+
+
+      // Создаём объект роутера.
+      // Структура объекта routes (второго параметра конструктора класса Router):
       // {
       //   '/some-path': {
       //      title: 'Название страницы',
@@ -881,25 +898,25 @@ export default {
       new Router(
         document.getElementById('main'),
         {
-          '/products': {
+          '^/products': {
             title: 'Наша продукция',
             html: document.getElementById('products').outerHTML,
             mount() {},
             unmount() {},
           },
-          '/questions': {
+          '^/questions': {
             title: 'Кто мы?',
             html: document.getElementById('questions').outerHTML,
             mount() {},
             unmount() {},
           },
-          '/about': {
+          '^/about': {
             title: 'О нас',
             html: document.getElementById('listing').outerHTML + document.getElementById('about').outerHTML,
             mount() {},
             unmount() {},
           },
-          '/contacts': {
+          '^/contacts': {
             title: 'Контакты',
             html: document.getElementById('contacts').outerHTML + document.getElementById('calculator').outerHTML,
             mount() {

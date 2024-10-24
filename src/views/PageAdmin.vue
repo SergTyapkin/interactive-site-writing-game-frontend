@@ -103,11 +103,11 @@
           <section v-if="selectedMilestone?.id === 1" class="renderer_ html_" v-html="codeText"></section>
 
           <section v-else-if="selectedMilestone?.id === 2" class="renderer_ css_">
-            <HtmlTemplateForBlock2 ref="renderer"></HtmlTemplateForBlock2>
+            <HtmlTemplateForBlock2 only-anchor-links ref="renderer"></HtmlTemplateForBlock2>
           </section>
 
           <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
-            <HtmlTemplateForBlock2 styled ref="renderer"></HtmlTemplateForBlock2>
+            <HtmlTemplateForBlock2 only-anchor-links styled ref="renderer"></HtmlTemplateForBlock2>
           </section>
 
           <section v-else-if="selectedMilestone?.id === 4" class="renderer_ js_spa_">
@@ -141,7 +141,7 @@ export default {
 
       allFragments: [],
       fontSize: 10,
-      isAdjustRendererSize: true,
+      isAdjustRendererSize: false,
 
       codeText: '',
       prettyText: '',
