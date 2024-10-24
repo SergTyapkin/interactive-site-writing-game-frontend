@@ -339,7 +339,7 @@ img
 <template>
   <div class="root-html-template" :class="{styled}">
     <header class="header">
-      <div class="header__logo">
+      <div class="header__logo" id="header__logo">
         <div class="header__logo__top">Mobile</div>
         <div class="header__logo__bottom">
           <span>store</span>
@@ -500,11 +500,22 @@ export default {
     scripted: Boolean,
   },
 
+  data() {
+    return {
+      initialInnerHtml: '',
+    }
+  },
+
   mounted() {
     this.addPageScripts();
+    this.initialInnerHtml = this.$el.innerHTML;
   },
 
   methods: {
+    reRender() {
+      this.$el.innerHTML = this.initialInnerHtml;
+    },
+
     addPageScripts() {
       if (!this.scripted) {
         return;
@@ -706,11 +717,19 @@ export default {
       function calculateAndSetResult() {
         const result = +inputCostElement.value * +inputCountElement.value;
         calculatedResultElement.innerText = String(result) || '0';
-
       }
       // Добавляем EventListener'ы для вызова функции обновления при вводе данных в инпуты
       inputCostElement.addEventListener('input', calculateAndSetResult);
       inputCountElement.addEventListener('input', calculateAndSetResult);
+      // -------------
+
+      // Получаем HTML-элемент логотипа
+      const logoElement = document.getElementById('header__logo');
+      // Добавляем EventListener для показа информации
+      // Самый простой способ - использовать функцию alert
+      logoElement.addEventListener('contextmenu', () => {
+        alert(`Дата сборки: 1 апр. 2023, 17:15\nВерсия: Beta-1.8.1`)
+      });
     }
   }
 }

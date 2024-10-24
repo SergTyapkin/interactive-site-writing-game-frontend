@@ -21,6 +21,7 @@
     display flex
     flex-wrap wrap
     gap 20px
+
     .input-group_
       display flex
       align-items center
@@ -28,6 +29,7 @@
 
       input
         input()
+
       button
         button()
         input()
@@ -48,6 +50,7 @@
       display flex
       backdrop-filter blur(10px)
       background mix(#333, transparent, 30%)
+
       .renderer_
         flex 1
         background colorBg
@@ -73,7 +76,7 @@
         <input id="adjust-size" v-model="isAdjustRendererSize" type="checkbox">
       </div>
       <div class="input-group_">
-        <button type="submit" @click="reloadPage">Reload</button>
+        <button type="submit" @click="reloadPage()">Reload</button>
       </div>
     </div>
 
@@ -94,19 +97,20 @@
         readonly
       ></VAceEditor>
 
-      <div class="renderers-container_" ref="renderersContainer" :style="{'--total-height': isAdjustRendererSize ? totalRendererHeight : 0, '--max-height': maxRendererHeightToScreen}">
+      <div class="renderers-container_" ref="renderersContainer"
+           :style="{'--total-height': isAdjustRendererSize ? totalRendererHeight : 0, '--max-height': maxRendererHeightToScreen}">
         <section v-if="selectedMilestone?.id === 1" class="renderer_ html_" v-html="codeText"></section>
 
         <section v-else-if="selectedMilestone?.id === 2" class="renderer_ css_">
-          <HtmlTemplateForBlock2></HtmlTemplateForBlock2>
+          <HtmlTemplateForBlock2 ref="renderer"></HtmlTemplateForBlock2>
         </section>
 
         <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
-          <HtmlTemplateForBlock2 styled></HtmlTemplateForBlock2>
+          <HtmlTemplateForBlock2 styled ref="renderer"></HtmlTemplateForBlock2>
         </section>
 
         <section v-else-if="selectedMilestone?.id === 4" class="renderer_ js_spa_">
-          <HtmlTemplateForBlock2 styled scripted></HtmlTemplateForBlock2>
+          <HtmlTemplateForBlock2 styled scripted ref="renderer"></HtmlTemplateForBlock2>
         </section>
       </div>
     </main>
@@ -165,6 +169,9 @@ export default {
 
     this.$ws.handlers.fragment_updated = (data) => {
       const fragment = validateModel(FragmentModel, data);
+      if (String(fragment.milestoneId) !== String(this.selectedMilestoneId)) {
+        return;
+      }
       const existingFragment = this.allFragments.find(frag => frag.id === fragment.id);
       if (!existingFragment) {
         console.error("CRITICAL ERROR. FRAGMENT NOT FOUND IN UPDATING");
@@ -185,17 +192,39 @@ export default {
     },
 
     async reloadPage() {
-      const saveSelectedMilestoneId = this.selectedMilestoneId;
-      this.selectedMilestoneId = null;
-      this.codeText = '';
-      await nextTick();
-      this.selectedMilestoneId = saveSelectedMilestoneId;
-      this.updateCodeTexts();
+      this.getAllTexts();
+      await this.reloadRenderer();
+    },
+    async reloadRenderer() {
+      if (!this.$refs.renderer) {
+        return;
+      }
+      this.$refs.renderer.reRender();
     },
 
-    updateCodeTexts() {
+    async updateCodeTexts() {
+      if (this.selectedMilestone?.id === 3) {
+        await this.reloadRenderer();
+      }
+
       // Code text
-      const codeText = this.allFragments.reduce((acc, cur) => acc + cur.text, '');
+      const codeText = this.allFragments.reduce(
+        (acc, fragment) => {
+          if (this.selectedMilestone.codeLanguage === 'javascript') {
+            // Execute each code block
+            try {
+              eval(`(function() {${fragment.text}\n})();`);
+              delete fragment.error;
+            } catch (err) {
+              // console.error(`Error while executing fragment id: ${fragment.id}, name: ${fragment.name}, username: ${fragment.userUsername}. Error: ${err}`);
+              fragment.error = err;
+            }
+            return '';
+          }
+          return acc + fragment.text;
+        },
+        ''
+      );
       this.codeText = codeText;
       if (this.selectedMilestone?.id === 2) {
         this.customStylesComponent.innerHTML = codeText;
@@ -215,11 +244,12 @@ export default {
         commentStrEnd = ''
       }
       this.prettyText = this.allFragments.reduce(
-        (acc, cur) =>
+        (acc, fragment) =>
           acc +
-          `${commentStrStart} ------[${cur.id}] ${cur.userUsername} #${cur.userId}------ ${commentStrEnd}
-${cur.text.trim()}
-`,
+          `${fragment.userId ? `${commentStrStart} ------[${fragment.name}]------ ${commentStrEnd}\n` : ''}` +
+          `${commentStrStart} ------[${fragment.id}] ${fragment.userUsername} #${fragment.userId}------ ${commentStrEnd}\n` +
+          `${fragment.text.trim()}\n` +
+          `${this.selectedMilestone?.codeLanguage === 'javascript' ? `/** ${fragment.error ? fragment.error : 'SCRIPT IS OK!'} **/\n\n` : ''}`,
         ''
       );
 
