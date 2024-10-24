@@ -494,6 +494,8 @@ img
 </template>
 
 <script>
+import {nextTick} from "vue";
+
 export default {
   props: {
     styled: Boolean,
@@ -512,8 +514,10 @@ export default {
   },
 
   methods: {
-    reRender() {
+    async reRender() {
       this.$el.innerHTML = this.initialInnerHtml;
+      await nextTick();
+      this.addPageScripts();
     },
 
     addPageScripts() {
