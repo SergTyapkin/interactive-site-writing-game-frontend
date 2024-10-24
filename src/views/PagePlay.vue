@@ -73,6 +73,8 @@ export default {
 
       sendingInterval: undefined,
       hasNewChanges: false,
+      isSkip1Watch: false,
+      isSkip1FragmentUpdated: false,
     }
   },
 
@@ -86,9 +88,29 @@ export default {
     this.fragment = validateModel(FragmentModel, fragmentData);
     this.milestoneData = Milestones.find(milestone => String(milestone.id) === String(this.fragment.milestoneId));
 
-    this.codeText = this.fragment.text || this.fragment.defaultText;
+    this.codeText = this.fragment.text;
 
     this.sendingInterval = setInterval(this.sendTextUpdate, 2000);
+
+    this.$ws.handlers.fragment_updated = (data) => {
+      // console.log("EVENT", this.isSkip1FragmentUpdated);
+      const fragment = validateModel(FragmentModel, data);
+      if (
+        (String(fragment.milestoneId) !== String(this.fragment.milestoneId)) ||
+        (String(fragment.id) !== String(this.fragment.id))
+      ) {
+        return;
+      }
+      if (this.isSkip1FragmentUpdated) {
+        this.isSkip1FragmentUpdated = false;
+        return;
+      }
+      this.$localStorage.saveSelectedFragment(data);
+      this.fragment = fragment;
+      this.codeText = this.fragment.text;
+      this.isSkip1Watch = true;
+      // console.log("SET WATCH");
+    }
   },
 
   unmounted() {
@@ -105,6 +127,8 @@ export default {
         fragment_id: this.fragment.id,
         fragment_text: this.codeText,
       });
+      this.isSkip1FragmentUpdated = true;
+      // console.log("SET EVENT");
       this.hasNewChanges = false;
     },
 
@@ -115,6 +139,11 @@ export default {
 
   watch: {
     codeText(to) {
+      // console.log("WATCH", this.isSkip1Watch);
+      if (this.isSkip1Watch) {
+        this.isSkip1Watch = false;
+        return;
+      }
       let fragmentData = this.$localStorage.loadSelectedFragment();
       if (!fragmentData) {
         console.error("CRITICAL ERROR. FRAGMENT NOT EXISTS");
