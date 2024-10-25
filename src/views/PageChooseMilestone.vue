@@ -3,6 +3,7 @@
 @require '../styles/utils.styl'
 @require '../styles/fonts.styl'
 @require '../styles/animations.styl'
+@require '../styles/components.styl'
 
 .root-milestones
   display flex
@@ -37,11 +38,8 @@
         top -100px
         color colorText1
       .milestone
-        border 1px solid #66666660
-        border-radius borderRadiusS
+        block()
         padding 20px
-        backdrop-filter blur(8px)
-        background mix(#333, transparent)
         position relative
         min-height 150px
         trans()
@@ -61,6 +59,17 @@
             font-small()
         .description
           color colorText1
+        .button-opened
+          button-no-styles()
+          position absolute
+          right 10px
+          bottom 0
+          opacity 0.5
+          transform rotate(90deg)
+          trans()
+          img
+            width 40px
+            height 40px
 
         &:hover
           background mix(#555, transparent, 60%)
@@ -68,6 +77,36 @@
           .top-string
             .name
               letter-spacing 4px
+
+      &.opened
+        .milestone
+          .button-opened
+            transform rotate(-90deg)
+
+
+      .fragments
+        list-no-styles()
+        padding 20px 0
+        .fragment
+          block()
+          padding 10px 20px
+          margin 8px 0
+          border none
+          cursor pointer
+          trans()
+          &:hover
+            background mix(#555, transparent, 60%)
+          .hardness
+            color colorText5
+            font-small()
+            .number-text
+              font-large-extra()
+              margin-right 5px
+          .name
+            font-large()
+            .id
+              font-small-extra()
+              color colorText5
 </style>
 
 <template>
@@ -75,15 +114,25 @@
     <header class="header">Выбор этапа</header>
 
     <ul class="milestones-list">
-      <li v-for="milestone in allMilestones" class="milestone-container">
+      <li v-for="milestone in allMilestones" class="milestone-container" :class="{opened: milestone._isElementOpened}">
         <header class="number">{{ milestone.id }}</header>
-        <div @click="chooseMilestone(milestone)" class="milestone">
+        <div @click="toggleOpeningMilestone(milestone)" class="milestone">
           <div class="top-string">
             <header class="name">{{ milestone.name }}</header>
             <div class="year">год {{ milestone.year }}</div>
           </div>
           <div class="description">{{ milestone.description }}</div>
+          <button class="button-opened"><img src="../../res/icons/arrow_corner_right.svg" alt="arrow"></button>
         </div>
+
+        <transition name="opacity">
+          <ul v-if="milestone._isElementOpened" class="fragments">
+            <li v-for="fragment in milestone.availableFragments" @click="chooseFragment(milestone, fragment)" class="fragment">
+              <div class="hardness"><span class="number-text">{{ fragment.hardness * 10 }}</span> сложности</div>
+              <div class="name">{{ fragment.name }} <span class="id">#{{ fragment.id }}</span></div>
+            </li>
+          </ul>
+        </transition>
       </li>
     </ul>
   </div>
@@ -91,6 +140,8 @@
 
 <script>
 import CircleLoading from "~/App.vue";
+import validateModel from "@sergtyapkin/models-validator";
+import {FragmentPreviewModel} from "~/models";
 
 export default {
   components: {CircleLoading},
@@ -106,19 +157,38 @@ export default {
 
   mounted() {
     this.getAllMilestones();
+
+    this.$ws.handlers.available_fragments = (data) => {
+      const milestone = this.allMilestones?.find(milestone => String(milestone.id) === String(data.milestone_id));
+      if (!milestone) {
+        return;
+      }
+      milestone.availableFragments =
+        data.fragments
+          .map(fragment => validateModel(FragmentPreviewModel, fragment))
+          .sort((a, b) => b.hardness - a.hardness);
+    };
   },
 
   methods: {
-    async chooseMilestone(milestone) {
-      if (!await this.$modal.confirm(`Вы точно хотите выбрать этап "${milestone.name}"?`)) {
+    toggleOpeningMilestone(milestone) {
+      milestone._isElementOpened = !milestone._isElementOpened;
+      if (!milestone.available_fragments) {
+        this.$ws.send('get_all_available_fragments', {
+          milestone_id: milestone.id,
+        });
+      }
+    },
+
+    async chooseFragment(milestone, fragment) {
+      if (!await this.$modal.confirm(`Вы точно хотите выбрать задание на ${fragment.hardness * 10} сложности "${fragment.name}"?`)) {
         return;
       }
-      const userWantsToGetHarder = await this.$modal.confirm("Вы хотели бы получить часть кода посложнее?");
       this.$ws.send('take_fragment', {
         user_id: this.$user.id,
         user_username: this.$user.username,
         milestone_id: milestone.id,
-        request_hardness: userWantsToGetHarder ? 1.0 : 0.0,
+        request_fragment_id: fragment.id,
       });
 
       this.$ws.handlers.set_fragment = (data) => {

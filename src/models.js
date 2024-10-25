@@ -49,6 +49,14 @@ export const FragmentShortModel = {
   text: String,
 }
 
+
+export const FragmentPreviewModel = {
+  id: String,
+  name: String,
+  hardness: Number
+}
+
+
 export const MilestoneModel = {
   id: String,
   year: Number,
