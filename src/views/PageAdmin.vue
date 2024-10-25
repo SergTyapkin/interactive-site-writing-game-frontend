@@ -77,7 +77,10 @@
         <input id="adjust-size" v-model="isAdjustRendererSize" type="checkbox">
       </div>
       <div class="input-group_">
-        <button type="submit" @click="reloadPage()">Reload</button>
+        <button type="submit" @click="reloadPage()">Reload HTML</button>
+      </div>
+      <div class="input-group_">
+        <button type="submit" @click="clearFragmentData()">Clear Fragment</button>
       </div>
     </div>
 
@@ -264,6 +267,21 @@ export default {
         this.totalRendererHeight = this.$refs.renderersContainer.scrollHeight;
       }, 100);
     },
+
+    async clearFragmentData() {
+      if (this.selectedMilestoneId === null || this.selectedMilestoneId === undefined) {
+        this.$modal.alert('Сначала выберите этап в выпадающем списке');
+        return;
+      }
+      const fragmentId = await this.$modal.prompt('Введите ID фрагмента для очистки данных', 'Чтобы отменить, просто закройте диалоговое окно');
+      if (!fragmentId) {
+        return;
+      }
+      this.$ws.send('clear_fragment_data', {
+        milestone_id: this.selectedMilestoneId,
+        fragment_id: fragmentId,
+      });
+    }
   },
 }
 </script>

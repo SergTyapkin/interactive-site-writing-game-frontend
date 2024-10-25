@@ -173,7 +173,7 @@ export default {
   methods: {
     toggleOpeningMilestone(milestone) {
       milestone._isElementOpened = !milestone._isElementOpened;
-      if (!milestone.available_fragments) {
+      if (!milestone.availableFragments) {
         this.$ws.send('get_all_available_fragments', {
           milestone_id: milestone.id,
         });
