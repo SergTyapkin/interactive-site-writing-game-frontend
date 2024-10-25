@@ -151,7 +151,7 @@
         <transition name="opacity">
           <ul v-if="milestone._isElementOpened" class="fragments">
             <li v-for="fragment in milestone.availableFragments" @click="chooseFragment(milestone, fragment)" class="fragment">
-              <div class="hardness"><span class="number-text">{{ fragment.hardness * 10 }}</span> сложности</div>
+              <div class="hardness"><span class="number-text">{{ fragment.hardness * 10 }}</span> сложность</div>
               <div class="name">{{ fragment.name }} <span class="id">#{{ fragment.id }}</span></div>
             </li>
           </ul>
