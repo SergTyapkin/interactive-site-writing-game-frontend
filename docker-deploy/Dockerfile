@@ -20,11 +20,11 @@ RUN yarn dist
 # substitute env variables into nginx.conf
 # you can add any your variables that you need to substitute into nginx.conf
 ARG DOMAIN_URL
-ARG API_HOST
-ARG API_PORT
+ARG WS_HOST
+ARG WS_PORT
 RUN export DOMAIN_URL=${DOMAIN_URL} && \
-    export API_HOST=${API_HOST} && \
-    export API_PORT=${API_PORT} && \
+    export WS_HOST=${WS_HOST} && \
+    export WS_PORT=${WS_PORT} && \
     export DOLLAR="$" && \
     envsubst < /home/node/front/docker-deploy/nginx/nginx.conf > /home/node/front/docker-deploy/nginx/_nginx-substituted.conf && \
     cd /home/node/front/docker-deploy/nginx/locations/http && \

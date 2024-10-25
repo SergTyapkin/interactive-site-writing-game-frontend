@@ -10,12 +10,8 @@ services:
         - NGINX_RELEASE
         - NODE_RELEASE
         - DOMAIN_URL
-        - API_HOST
-        - API_PORT
-    environment:
-      - DOMAIN_URL
-      - API_HOST
-      - API_PORT
+        - WS_HOST
+        - WS_PORT
     volumes:
       - ./dist:/usr/share/nginx/html:rw
       - ./certbot/www:/var/www/certbot/:ro
@@ -23,10 +19,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "${API_PORT}:${API_PORT}"
+      - "${WS_PORT}:${WS_PORT}"
     networks:
       - external-front-back
       - default
+#    network_mode: host
     restart: unless-stopped
 
   # Needs to serve only http and get certs when certs is not created yet
