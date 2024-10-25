@@ -799,7 +799,7 @@ export default {
           // Этот метод реализовывает кто-то другой в другом фрагменте
           this.goto(hrefAttr);
         });
-      }
+      };
       // -------------------------
 
       Router.prototype.goto = function(path) {
@@ -815,7 +815,7 @@ export default {
         // Добавляем ссылку в историю браузера (сама он не добавится, ведь переход браузера по ссылке мы перехватили)
         // Этот метод реализовывает кто-то другой в другом фрагменте
         this.pushPathToHistory(path);
-      }
+      };
       // -------------------------
 
       Router.prototype.render = async function(route) {
@@ -835,7 +835,7 @@ export default {
         }
         route.mount();
         this.currentRoute = route;
-      }
+      };
       // -------------------------
 
       Router.prototype.animateElementShowHide = function() {
@@ -852,7 +852,7 @@ export default {
           this.rootElement.style.opacity = '1';
         }, 200);
         return promise;
-      }
+      };
       // -------------------------
 
       Router.prototype.nextTick = function() {
@@ -864,13 +864,13 @@ export default {
         // Ожидаем появления элементов на странице и после этого вызываем функцию разрешения промиса
         requestAnimationFrame(resolvePromiseFunction);
         return promise;
-      }
+      };
       // -------------------------
 
       Router.prototype.pushPathToHistory = function(path) {
         // Вызываем функцию добавления ссылки на страницу в браузерную историю
         history.pushState(null, null, path);
-      }
+      };
       // -------------------------
 
       Router.prototype.setPopstateHandler = function() {
@@ -880,7 +880,7 @@ export default {
           // Этот метод реализовывает кто-то другой в другом фрагменте
           this.goto(location.pathname);
         });
-      }
+      };
       // -------------------------
 
 
@@ -925,7 +925,7 @@ export default {
             unmount() {},
           },
         }
-      )
+      );
     }
   }
 }

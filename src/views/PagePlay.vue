@@ -80,8 +80,9 @@ export default {
 
   mounted() {
     const fragmentData = this.$localStorage.loadSelectedFragment();
+    console.log(fragmentData)
     if (!fragmentData) {
-      this.$popups.error("Ошибка", "Данные выбранного фрагмента не найдены");
+      // this.$popups.error("Ошибка", "Данные выбранного фрагмента не найдены");
       this.$router.push({name: "chooseMilestone"});
       return;
     }

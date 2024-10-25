@@ -264,13 +264,12 @@ export default {
         userName = await this.$modal.prompt("Введите ваше имя", "Имя будет отображаться для всех. Да, сюда можно написать \"ХУХ\", но давайте, пожалуйста, без бан-вордов", "", "Ваше имя...")
       }
       this.$ws.send('login_user', {username: userName});
-      let responsePromiseResolveFunc;
-      const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
-      this.$ws.handlers.user_logined = (data) => {
-        this.$store.dispatch('SET_USER', data, this.$localStorage);
-        responsePromiseResolveFunc();
-      }
-      await waitForResponsePromise;
+      await new Promise(resolve => {
+        this.$ws.handlers.user_logined = (data) => {
+          this.$store.dispatch('SET_USER', data, this.$localStorage);
+          resolve();
+        }
+      });
     },
 
     checkMobileScreen() {

@@ -72,11 +72,10 @@
 
 <template>
   <div class="root-milestones">
-    <CircleLoading v-if="loading"></CircleLoading>
-    <header v-else class="header">Выбор этапа</header>
+    <header class="header">Выбор этапа</header>
 
     <ul class="milestones-list">
-      <li v-for="milestone in milestones" class="milestone-container">
+      <li v-for="milestone in allMilestones" class="milestone-container">
         <header class="number">{{ milestone.id }}</header>
         <div @click="chooseMilestone(milestone)" class="milestone">
           <div class="top-string">
@@ -101,7 +100,7 @@ export default {
 
       loading: false,
 
-      milestones: [],
+      allMilestones: [],
     }
   },
 
@@ -111,10 +110,6 @@ export default {
 
   methods: {
     async chooseMilestone(milestone) {
-      if (this.loading) {
-        return;
-      }
-
       if (!await this.$modal.confirm(`Вы точно хотите выбрать этап "${milestone.name}"?`)) {
         return;
       }
@@ -126,31 +121,19 @@ export default {
         request_hardness: userWantsToGetHarder ? 1.0 : 0.0,
       });
 
-      this.loading = true;
-      let responsePromiseResolveFunc;
-      const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
       this.$ws.handlers.set_fragment = (data) => {
         this.$localStorage.saveSelectedFragment(data);
-        responsePromiseResolveFunc();
+        this.$router.push({name: 'play'});
       }
-      await waitForResponsePromise;
-      this.loading = false;
-      this.$router.push({name: 'play'});
     },
 
-    async getAllMilestones() {
+    getAllMilestones() {
       this.$ws.send('get_all_milestones', {});
 
-      let responsePromiseResolveFunc;
-      const waitForResponsePromise = new Promise(resolve => responsePromiseResolveFunc = resolve);
       this.$ws.handlers.all_milestones = (data) => {
         this.$localStorage.saveAllMilestones(data.milestones);
-        responsePromiseResolveFunc();
-      }
-      this.loading = true;
-      await waitForResponsePromise;
-      this.milestones = this.$localStorage.loadAllMilestones();
-      this.loading = false;
+        this.allMilestones = this.$localStorage.loadAllMilestones();
+      };
     }
   }
 }

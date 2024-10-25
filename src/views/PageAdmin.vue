@@ -64,6 +64,7 @@
   <div class="root-admin_">
     <Selector v-model="selectedMilestoneId" name="milestone" class="selector_" @update:modelValue="getAllTexts()">
       <option v-for="milestone in allMilestones" :value="milestone.id">{{ milestone.id }}. {{ milestone.name }}</option>
+      <option value="5">5. Результат</option>
     </Selector>
 
     <div class="input-groups-container_">
@@ -100,21 +101,21 @@
       <div class="renderers-container_" ref="renderersContainer"
            :style="{'--total-height': isAdjustRendererSize ? totalRendererHeight : 0, '--max-height': maxRendererHeightToScreen}">
         <transition name="opacity" mode="out-in">
-          <section v-if="selectedMilestone?.id === 1" class="renderer_ html_" v-html="codeText"></section>
+          <section v-if="selectedMilestoneId === '1'" class="renderer_ html_" v-html="codeText"></section>
 
-          <section v-else-if="selectedMilestone?.id === 2" class="renderer_ css_">
+          <section v-else-if="selectedMilestoneId === '2'" class="renderer_ css_">
             <HtmlTemplateForBlock2 only-anchor-links ref="renderer"></HtmlTemplateForBlock2>
           </section>
 
-          <section v-else-if="selectedMilestone?.id === 3" class="renderer_ js_">
+          <section v-else-if="selectedMilestoneId === '3'" class="renderer_ js_">
             <HtmlTemplateForBlock2 only-anchor-links styled ref="renderer"></HtmlTemplateForBlock2>
           </section>
 
-          <section v-else-if="selectedMilestone?.id === 4" class="renderer_ js_spa_">
+          <section v-else-if="selectedMilestoneId === '4'" class="renderer_ js_spa_">
             <HtmlTemplateForBlock2 styled scripted ref="renderer"></HtmlTemplateForBlock2>
           </section>
 
-          <section v-else-if="selectedMilestone?.id === 5" class="renderer_ vue_">
+          <section v-else-if="selectedMilestoneId === '5'" class="renderer_ vue_">
             <HtmlTemplateForBlock2 styled scripted-spa ref="renderer"></HtmlTemplateForBlock2>
           </section>
         </transition>
@@ -150,7 +151,6 @@ export default {
       totalRendererHeight: 0,
 
       customStylesComponent: document.getElementById('custom-styles-component'),
-
     }
   },
 
