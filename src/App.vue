@@ -22,7 +22,6 @@
     min-height unset
 
 
-backgroundBorderColor = colorBg
 animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
 .background
   z-index -1
@@ -33,8 +32,8 @@ animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
     opacity 0.3
     width 100%
     position absolute
-    border solid 1px colorBorder
-    background black
+    border solid 1px mix(colorBorder, transparent, 40%)
+    background #202020
     border-radius 20px
     animation bg-move-top animation-time-rule
     @keyframes bg-move-top
