@@ -1,23 +1,46 @@
 <style lang="stylus" scoped>
 @require '../styles/constants.styl'
 @require '../styles/buttons.styl'
+@require '../styles/animations.styl'
+@require '../styles/components.styl'
+@require '../styles/utils.styl'
 
 .root-play
   display flex
   flex-direction column
   .header-container
-    text-align center
-    padding 0 20px
-    margin-bottom 10px
-    cursor pointer
-    .header
-      font-large()
-    .task-name
-      font-large()
-      font-bold()
-    .description
-      font-small()
-      color colorText4
+    display flex
+    align-items center
+    padding 0 10px
+    @media(max-width 360px)
+      flex-direction column
+      margin-top -20px
+      gap 5px
+      align-items flex-start
+    .link
+      block()
+      display flex
+      align-items center
+      padding 3px 10px 3px 2px
+      height min-content
+      img
+        transform rotate(180deg)
+        width 30px
+        height 30px
+    .header-title
+      flex 1
+      text-align center
+      padding 0 20px
+      margin-bottom 10px
+      cursor pointer
+      .header
+        font-large()
+      .task-name
+        font-large()
+        font-bold()
+      .description
+        font-small()
+        color colorText4
 
   .main
     flex 1
@@ -29,10 +52,13 @@
 
 <template>
   <div class="root-play">
-    <div class="header-container" @click="showDescription">
-      <header class="header">Реализуйте вашу часть:</header>
-      <header class="task-name">{{ fragment?.name }} #{{ fragment?.id }}</header>
-      <div class="description">Нажмите, чтбы увидеть описание</div>
+    <div class="header-container">
+      <router-link :to="{name: 'chooseMilestone'}" class="link"><img src="../../res/icons/arrow_corner_right.svg" alt="arrow">Назад</router-link>
+      <div @click="showDescription" class="header-title">
+        <header class="header">Реализуйте вашу часть:</header>
+        <header class="task-name">{{ fragment?.name }} #{{ fragment?.id }}</header>
+        <div class="description">Нажмите, чтбы увидеть описание</div>
+      </div>
     </div>
 
     <main class="main">

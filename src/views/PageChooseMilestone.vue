@@ -83,7 +83,25 @@
           .button-opened
             transform rotate(-90deg)
 
-
+      .to-taken-fragment-block
+        block()
+        padding 10px 20px
+        margin 8px 0
+        border 1px solid colorEmp1
+        cursor pointer
+        trans()
+        &:hover
+          background mix(#555, transparent, 60%)
+        .title
+          font-large()
+          color colorText5
+        .description
+          font-large()
+          display flex
+          align-items center
+          img
+            width 30px
+            hegiht 30px
       .fragments
         list-no-styles()
         padding 20px 0
@@ -123,6 +141,11 @@
           </div>
           <div class="description">{{ milestone.description }}</div>
           <button class="button-opened"><img src="../../res/icons/arrow_corner_right.svg" alt="arrow"></button>
+        </div>
+
+        <div v-if="milestone.hasTakenFragment" class="to-taken-fragment-block" @click="chooseFragment(milestone)">
+          <div class="title">Ваш фрагмент</div>
+          <div class="description"><img src="../../res/icons/arrow_right.svg" alt="arrow">Перейти</div>
         </div>
 
         <transition name="opacity">
@@ -180,15 +203,26 @@ export default {
       }
     },
 
-    async chooseFragment(milestone, fragment) {
-      if (!await this.$modal.confirm(`Вы точно хотите выбрать задание на ${fragment.hardness * 10} сложности "${fragment.name}"?`)) {
-        return;
+    async chooseFragment(milestone, fragment=undefined) {
+      let fragmentId = -1;
+      if (fragment) {
+        if (milestone.hasTakenFragment) {
+          const res = await this.$modal.confirm(`Перевыбирать задание нельзя. Закончите уже выбранное!`, 'Перейти к выбранному заданию?');
+          if (res) {
+            this.chooseFragment(milestone);
+          }
+          return;
+        }
+        if (!await this.$modal.confirm(`Вы точно хотите выбрать задание ${fragment.hardness * 10} сложности "${fragment.name}"?`)) {
+          return;
+        }
+        fragmentId = fragment.id;
       }
       this.$ws.send('take_fragment', {
         user_id: this.$user.id,
         user_username: this.$user.username,
         milestone_id: milestone.id,
-        request_fragment_id: fragment.id,
+        request_fragment_id: fragmentId,
       });
 
       this.$ws.handlers.set_fragment = (data) => {
@@ -198,7 +232,10 @@ export default {
     },
 
     getAllMilestones() {
-      this.$ws.send('get_all_milestones', {});
+      this.$ws.send('get_all_milestones', {
+        user_id: this.$user.id,
+        user_username: this.$user.username,
+      });
 
       this.$ws.handlers.all_milestones = (data) => {
         this.$localStorage.saveAllMilestones(data.milestones);

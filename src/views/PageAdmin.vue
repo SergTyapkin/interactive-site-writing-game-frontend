@@ -201,6 +201,9 @@ export default {
     },
 
     async reloadPage() {
+      if (!this.selectedMilestone) {
+        return;
+      }
       this.getAllTexts();
       await this.reloadRenderer();
     },

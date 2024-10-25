@@ -65,5 +65,9 @@ export const MilestoneModel = {
   codeLanguage: {
     type: String,
     from: 'code_language',
+  },
+  hasTakenFragment: {
+    type: Boolean,
+    from: 'has_taken_fragment',
   }
 }
