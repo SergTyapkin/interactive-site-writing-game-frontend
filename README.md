@@ -1,6 +1,14 @@
-![GithubCI](https://github.com/sergtyapkin/vue-frontend-template/actions/workflows/deploy.yml/badge.svg)
+![GithubCI](https://github.com/sergtyapkin/interactive-site-writing-game-frontend/actions/workflows/deploy.yml/badge.svg)
 
-# Фронтенд на Vue.js с авто-деплоем на _Nginx_ в докере и автоматическим получением сертификатов _Letsencrypt_
+# Интерактивный сайт для демонстрации совместного написания сайта от HTML и CSS до SPA на JS
+
+  | 1. Вводим уникальное имя<br>![image](https://github.com/user-attachments/assets/03bb41e3-c723-4ee0-ab70-2d18b8529ca6)| 2. Выбираем один из разделов<br>![image](https://github.com/user-attachments/assets/0c2a1f37-d2b6-4c24-a24c-e81c7cb20ce3)|
+ | --| --|
+ | 3. Выбираем одну из задач в разделе<br>![image](https://github.com/user-attachments/assets/af02f4ad-db75-4501-8520-0a5eb0d5bec0)| 4. Пишем код решения. При этом наш код добавляется к общему<br>![image](https://github.com/user-attachments/assets/121361c6-b8ff-4b8f-8c5e-ccfed0dc75ab)|
+ | 5. Админская страничка позволяет просматривать и рендерить в реальном времени общий код<br>![image](https://github.com/user-attachments/assets/52d67243-0cda-4d5f-a74b-35be327c0fd1)| 6. А так же очищать взятые людьми задачки ![image](https://github.com/user-attachments/assets/cb6fe7ba-6079-496c-877b-e386c58f67fd)|
+
+
+# Создано из шаблона: Фронтенд на Vue.js с авто-деплоем на _Nginx_ в докере и автоматическим получением сертификатов _Letsencrypt_
 В общем все, чтобы раскатить фронтенд за 10 минут на чистой машине с Ubuntu
 
 ## Развертка для разработки
