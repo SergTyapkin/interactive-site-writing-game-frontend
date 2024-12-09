@@ -17,6 +17,10 @@ services:
       - "80:80"
       - "443:443"
       - "${WS_PORT}:${WS_PORT}"
+    environment:
+      - DOMAIN_URL=${VITE_DEPLOY_HOSTNAME}
+      - WS_PORT
+      - WS_HOST
     networks:
       - external-front-back
       - default
