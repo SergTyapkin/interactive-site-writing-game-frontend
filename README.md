@@ -1,4 +1,4 @@
-![GithubCI](https://github.com/sergtyapkin/vue-frontend-template/actions/workflows/deploy.yml/badge.svg)
+![GithubCI](https://github.com/sergtyapkin/interactive-site-writing-game-frontend/actions/workflows/deploy.yml/badge.svg)
 
 # Фронтенд на Vue.js с авто-деплоем на _Nginx_ в докере и автоматическим получением сертификатов _Letsencrypt_
 
