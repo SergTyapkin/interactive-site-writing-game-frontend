@@ -1,7 +1,7 @@
 <style lang="stylus" scoped>
-@require 'styles/constants.styl'
-@require 'styles/buttons.styl'
-@require 'styles/fonts.styl'
+@import 'styles/constants.styl'
+@import 'styles/buttons.styl'
+@import 'styles/fonts.styl'
 
 .wrapper
   width 100%
@@ -121,15 +121,15 @@ animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
 
   <div class="wrapper">
     <CircleLoading v-if="!websocketOpened || !$user.isSignedIn" class="loading"></CircleLoading>
-    <router-view v-else v-slot="{ Component }">
+    <router-view v-else #default="{ Component }">
       <transition name="scale-in">
-        <component :is="Component"/>
+        <component :is="Component" />
       </transition>
     </router-view>
   </div>
 
-  <Popups ref="popups"></Popups>
-  <Modals ref="modals"></Modals>
+  <Popups ref="popups" />
+  <Modals ref="modals" />
 </template>
 
 <style>
@@ -222,7 +222,7 @@ export default {
     this.global.$app = this;
 
     this.checkMobileScreen();
-    window.addEventListener('resize', (e) => {
+    window.addEventListener('resize', () => {
       this.checkMobileScreen();
     });
 
@@ -273,11 +273,19 @@ export default {
 
     checkMobileScreen() {
       if (window.innerWidth <= 700) {
-        this.global.$isMobile = true;
+        this.global!.$isMobile = true;
         return;
       }
-      this.global.$isMobile = false;
-    }
-  }
+      this.global!.$isMobile = false;
+    },
+  },
+
+  watch: {
+    $route(to, from) {
+      this.transitionName = 'scale-in';
+
+      console.log(from.path, 'TO', to.path);
+    },
+  },
 };
 </script>

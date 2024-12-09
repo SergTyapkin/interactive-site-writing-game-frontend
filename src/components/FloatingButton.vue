@@ -1,6 +1,8 @@
 <style lang="stylus" scoped>
-@require '../styles/constants.styl'
-@require '../styles/utils.styl'
+@import '../styles/constants.styl'
+@import '../styles/utils.styl'
+
+padding = 5px
 
 float-button-height = 50px
 image-width = 30px
@@ -60,8 +62,8 @@ padding = 5px
 </style>
 
 <template>
-  <div class="float-button " :class="{green}">
-    <router-link class="fields" :to="to" v-if="to">
+  <div class="float-button" :class="{ green }">
+    <router-link v-if="to" class="fields" :to="to">
       <span class="hover-text">{{ title }}</span>
       <span class="image">
         <slot></slot>
@@ -80,9 +82,15 @@ padding = 5px
 <script>
 export default {
   props: {
-    title: String,
-    to: String,
+    title: {
+      type: String,
+      default: undefined,
+    },
+    to: {
+      type: String,
+      default: undefined,
+    },
     green: Boolean,
-  }
+  },
 };
 </script>

@@ -1,20 +1,22 @@
-@require 'constants.styl'
-@require 'fonts.styl'
-@require 'buttons.styl'
-@require 'utils.styl'
+@import 'constants.styl'
+@import 'fonts.styl'
+@import 'buttons.styl'
+@import 'utils.styl'
 
 block(colorBorder=colorBorder)
-    display block
-    padding 35px
-    border colorBorder 2px solid
-    border-radius borderRadiusXL
-    header
-        font-large()
-    section
-        font-medium()
+  display block
+  padding 35px
+  border colorBorder 2px solid
+  border-radius borderRadiusXL
+
+  header
+    font-large()
+
+  section
+    font-medium()
 block-bg(colorBg=colorBg)
-    display block
-    background colorBg
+  display block
+  background colorBg
 
 block()
     border 1px solid #66666660

@@ -9,11 +9,8 @@ services:
       args:
         - NGINX_RELEASE
         - NODE_RELEASE
-        - DOMAIN_URL
-        - WS_HOST
-        - WS_PORT
     volumes:
-      - ./dist:/usr/share/nginx/html:rw
+      - ./container-dist:/frontend-dist:rw
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
     ports:
@@ -34,7 +31,7 @@ services:
       - ./nginx/nginx_certbot.conf:/etc/nginx/nginx.conf:ro
       - ./certbot/www:/var/www/certbot/:ro
     ports:
-      - "80:80"
+      - '80:80'
     restart: no
 
   # To generate certs:

@@ -1,8 +1,7 @@
 <style scoped lang="stylus">
-@require '../styles/constants.styl'
-@require '../styles/buttons.styl'
-@require '../styles/fonts.styl'
-
+@import '../styles/constants.styl'
+@import '../styles/buttons.styl'
+@import '../styles/fonts.styl'
 </style>
 
 <template>
@@ -12,20 +11,16 @@
   </div>
 </template>
 
-
-<script>
+<script lang="ts">
 export default {
   components: {},
 
   data() {
-    return {
-    }
+    return {};
   },
 
-  mounted() {
-  },
+  mounted() {},
 
-  methods: {
-  }
-}
+  methods: {},
+};
 </script>
