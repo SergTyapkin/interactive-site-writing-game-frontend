@@ -182,7 +182,7 @@ animation-time-rule = cubic-bezier(0.29, 0.82, 0.36, 0.99)
 }
 </style>
 
-<script>
+<script lang="ts">
 import {getCurrentInstance} from "vue";
 import {Modals, Popups} from "@sergtyapkin/modals-popups";
 import CircleLoading from "./components/CircleLoading.vue";
@@ -200,14 +200,6 @@ export default {
 
       global: undefined,
     }
-  },
-
-  watch: {
-    $route(to, from) {
-      this.transitionName = 'scale-in';
-
-      console.log(from.path, 'TO', to.path)
-    },
   },
 
   async mounted() {
